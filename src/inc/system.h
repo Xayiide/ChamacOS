@@ -4,6 +4,13 @@
 #include <stddef.h> /* size_t */
 #include <stdint.h> /* uint_t */
 
+typedef struct
+{
+    uint32_t gs, fs, es, ds;
+    uint32_t edi, esi, ebp, esp, ebx, edx, ecx, eax;
+    uint32_t int_no, err_code;
+    uint32_t eip, cs, eflags, old_esp, ss;
+} __attribute__((packed)) regs_t;
 
 /* main.c (futuro mem) */
 void   *memcpy (void *dest, const void *src, size_t n);

@@ -27,7 +27,7 @@ void gdt_set(uint32_t num, uint32_t base, uint32_t limit,
 void gdt_init()
 {
     gdtr.limit = (sizeof(gdt_entry_t) * 3) - 1;
-    gdtr.base  = (uint32_t) &gdt;
+    gdtr.base  = &gdt;
 
     /* Descriptor nulo */
     gdt_set(0, 0, 0, 0, 0);
@@ -38,10 +38,10 @@ void gdt_init()
      * Granul  : 4KBytes
      * opcodes : 32-bit
      * tipo    : codigo*/
-    gdt_set(1, 0, 0xFFFFFFFF, 0x9A, 0xCF);
+    //gdt_set(1, 0, 0xFFFFFFFF, 0x9A, 0xCF);
 
     /* Segmento de datos. Igual pero tipo = datos */
-    gdt_set(2, 0, 0xFFFFFFFF, 0x92, 0xCF);
+    //gdt_set(2, 0, 0xFFFFFFFF, 0x92, 0xCF);
 
     gdt_load();
 }

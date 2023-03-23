@@ -5,6 +5,23 @@
 
 #define IDT_MAX_DESCRIPTORS 256
 
+#define IDT_DESC_TASK    0x05
+#define IDT_DESC_16_INT  0x06
+#define IDT_DESC_16_TRAP 0x07
+#define IDT_DESC_32_INT  0x0E
+#define IDT_DESC_32_TRAP 0x0F
+
+#define IDT_DESC_PRES 0x80 // 1000 -> PRESENT
+#define IDT_DESC_R0   0x00 // 0000 -> Por defecto al usar GATE_PRESENT
+#define IDT_DESC_R1   0x40 // 0100
+#define IDT_DESC_R2   0x20 // 0010
+#define IDT_DESC_R3   0x60 // 0110
+
+#define IDT_R0_32_INT  (IDT_DESC_PRES | IDT_DESC_32_INT)  // 8Eh
+#define IDT_R0_32_TRAP (IDT_DESC_PRES | IDT_DESC_32_TRAP) // 8Fh
+#define IDT_R3_32_INT  (IDT_DESC_PRES | IDT_DESC_R3 | IDT_DESC_32_INT)  // EEh
+#define IDT_R3_32_TRAP (IDT_DESC_PRES | IDT_DESC_R3 | IDT_DESC_32_TRAP) // EFh
+
 typedef struct
 {
     uint16_t base_lo;
