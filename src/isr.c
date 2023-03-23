@@ -75,38 +75,40 @@ char *isr_exception_name[] =
 
 void isr_init()
 {
-    idt_set(0,  (uint32_t) &isr0,  GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
-    idt_set(1,  (uint32_t) &isr1,  GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
-    idt_set(2,  (uint32_t) &isr2,  GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
-    idt_set(3,  (uint32_t) &isr3,  GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
-    idt_set(4,  (uint32_t) &isr4,  GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
-    idt_set(5,  (uint32_t) &isr5,  GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
-    idt_set(6,  (uint32_t) &isr6,  GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
-    idt_set(7,  (uint32_t) &isr7,  GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
-    idt_set(8,  (uint32_t) &isr8,  GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
-    idt_set(9,  (uint32_t) &isr9,  GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
-    idt_set(10, (uint32_t) &isr10, GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
-    idt_set(11, (uint32_t) &isr11, GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
-    idt_set(12, (uint32_t) &isr12, GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
-    idt_set(13, (uint32_t) &isr13, GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
-    idt_set(14, (uint32_t) &isr14, GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
-    idt_set(15, (uint32_t) &isr15, GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
-    idt_set(16, (uint32_t) &isr16, GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
-    idt_set(17, (uint32_t) &isr17, GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
-    idt_set(18, (uint32_t) &isr18, GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
-    idt_set(19, (uint32_t) &isr19, GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
-    idt_set(20, (uint32_t) &isr20, GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
-    idt_set(21, (uint32_t) &isr21, GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
-    idt_set(22, (uint32_t) &isr22, GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
-    idt_set(23, (uint32_t) &isr23, GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
-    idt_set(24, (uint32_t) &isr24, GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
-    idt_set(25, (uint32_t) &isr25, GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
-    idt_set(26, (uint32_t) &isr26, GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
-    idt_set(27, (uint32_t) &isr27, GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
-    idt_set(28, (uint32_t) &isr28, GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
-    idt_set(29, (uint32_t) &isr29, GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
-    idt_set(30, (uint32_t) &isr30, GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
-    idt_set(31, (uint32_t) &isr31, GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
+    idt_set(0,  (uint32_t) isr0,  GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
+    idt_set(1,  (uint32_t) isr1,  GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
+    idt_set(2,  (uint32_t) isr2,  GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
+    idt_set(3,  (uint32_t) isr3,  GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
+    idt_set(4,  (uint32_t) isr4,  GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
+    idt_set(5,  (uint32_t) isr5,  GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
+    idt_set(6,  (uint32_t) isr6,  GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
+    idt_set(7,  (uint32_t) isr7,  GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
+    idt_set(8,  (uint32_t) isr8,  GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
+    idt_set(9,  (uint32_t) isr9,  GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
+    idt_set(10, (uint32_t) isr10, GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
+    idt_set(11, (uint32_t) isr11, GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
+    idt_set(12, (uint32_t) isr12, GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
+    idt_set(13, (uint32_t) isr13, GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
+    idt_set(14, (uint32_t) isr14, GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
+    idt_set(15, (uint32_t) isr15, GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
+    idt_set(16, (uint32_t) isr16, GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
+    idt_set(17, (uint32_t) isr17, GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
+    idt_set(18, (uint32_t) isr18, GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
+    idt_set(19, (uint32_t) isr19, GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
+    idt_set(20, (uint32_t) isr20, GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
+    idt_set(21, (uint32_t) isr21, GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
+    idt_set(22, (uint32_t) isr22, GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
+    idt_set(23, (uint32_t) isr23, GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
+    idt_set(24, (uint32_t) isr24, GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
+    idt_set(25, (uint32_t) isr25, GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
+    idt_set(26, (uint32_t) isr26, GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
+    idt_set(27, (uint32_t) isr27, GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
+    idt_set(28, (uint32_t) isr28, GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
+    idt_set(29, (uint32_t) isr29, GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
+    idt_set(30, (uint32_t) isr30, GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
+    idt_set(31, (uint32_t) isr31, GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
+
+    idt_en_ints();
 }
 
 void isr_fault_handler(regs_t *r)

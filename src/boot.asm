@@ -30,11 +30,13 @@ mboot:
 stublet:
     extern kmain
     call kmain
-    
-    mov eax, 0
-    div eax
 
     jmp $
+
+global divzero
+divzero:
+    mov eax, 0
+    div eax
 
 ; GDT
 global gdt_load

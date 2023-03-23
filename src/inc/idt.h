@@ -39,5 +39,7 @@ typedef struct
 
 void idt_init();
 void idt_set(uint8_t num, uint32_t base, uint16_t sel, uint8_t flags);
+void idt_en_ints();
+void idt_dis_ints();
 
 #endif

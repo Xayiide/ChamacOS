@@ -3,6 +3,7 @@
 #include "idt.h" /* idt_init */
 #include "isr.h" /* isr_init */
 
+extern void divzero();
 
 void kmain()
 {
@@ -17,6 +18,9 @@ void kmain()
 
     isr_init();
     vga_puts("ISRs inicializados\n");
+    
+    divzero();
 
     for (;;);
+
 }
