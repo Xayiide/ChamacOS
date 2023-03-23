@@ -1,8 +1,6 @@
 #include "system.h"
 #include "vga.h"
 #include "gdt.h"
-#include "idt.h"
-#include "isr.h"
 
 
 void kmain()
