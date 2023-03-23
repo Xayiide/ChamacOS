@@ -12,7 +12,7 @@ typedef struct
 {
     uint16_t limit_lo;
     uint16_t base_lo;
-    uint16_t base_mi;
+    uint8_t  base_mi;
     uint8_t  access;
     uint8_t  gran;  
     uint8_t  base_hi;
@@ -24,8 +24,6 @@ typedef struct
     uint32_t base;
 } __attribute__((packed)) gdtr_t;
 
-//void gdt_init();
-//void gdt_set(uint32_t num, uint32_t base, uint32_t limit,
-//             uint8_t access, uint8_t gran); /* TODO static en gdt.c? */
+void gdt_init();
 
 #endif
