@@ -33,8 +33,32 @@ stublet:
     jmp $
 
 ; GDT below
+global gdt_load
+extern gdtr         ; gdt.c
+gdt_load:
+    lgdt[gdtr]      ; Carga el GDT con la variable gdtr de gdt.c
+    mov ax, 0x10    ; 0x10 es el despl. de nuestro segmento de datos en el GDT
+
+    mov ds, ax      ; Inicializa los registros de segmento
+    mov es, ax
+    mov fs, ax
+    mov gs, ax
+    mov ss, ax
+    
+    jmp 0x08: flush2 ; 0x08 es el despl. del segmento de codigo
+flush2:
+    ret             ; Retorna al codigo de C
+
 
 ; ISRs below
+global idt_load
+extern idtr         ; idt.c
+idt_load:
+    lidt[idtr]
+    ret
+
+
+
 
 SECTION .bss
     resb 8192 ; Reserva 8192 bytes de memoria
