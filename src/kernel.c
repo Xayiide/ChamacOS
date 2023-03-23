@@ -1,6 +1,7 @@
-#include "system.h"
-#include "vga.h"
-#include "gdt.h"
+#include "vga.h" /* vga_puts */
+#include "gdt.h" /* gdt_init */
+#include "idt.h" /* idt_init */
+#include "isr.h" /* isr_init */
 
 
 void kmain()
@@ -10,5 +11,12 @@ void kmain()
 
     gdt_init();
     vga_puts("GDT inicializado\n");
+
+    idt_init();
+    vga_puts("IDT inicializado\n");
+
+    isr_init();
+    vga_puts("ISRs inicializados\n");
+
     for (;;);
 }

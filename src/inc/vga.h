@@ -1,6 +1,8 @@
 #ifndef _VGA_H_
 #define _VGA_H_
 
+#include <stdint.h> /* uint_t */
+
 #define VGA_ADDR 0xB8000
 #define VGA_W    80
 #define VGA_H    25
