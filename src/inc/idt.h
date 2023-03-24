@@ -28,7 +28,7 @@ typedef struct
     uint16_t ssel;
     uint8_t  zero;
     uint8_t  flags;
-    uint8_t base_hi;
+    uint16_t base_hi;
 } __attribute__((packed)) idt_entry_t;
 
 typedef struct

@@ -107,14 +107,13 @@ void isr_init()
     idt_set(29, (uint32_t) isr29, GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
     idt_set(30, (uint32_t) isr30, GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
     idt_set(31, (uint32_t) isr31, GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
-
-    idt_en_ints();
 }
 
 void isr_fault_handler(regs_t *r)
 {
     if (r->int_no < 32)
     {
+        vga_color(VGA_BACK_BLACK, VGA_FORE_RED);
         vga_puts(isr_exception_name[r->int_no]);
         vga_puts("\nParando el sistema!\n");
         while (1);

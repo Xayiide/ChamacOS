@@ -10,11 +10,15 @@
 #define VGA_BLACK_WHITE 0x0F /* Fondo negro letras blancas */
 #define VGA_WHITE_BLACK 0xF0
 
+#define VGA_BACK_BLACK  0x00
+#define VGA_FORE_RED    0x04
+
 void vga_init();
 void vga_putchar(uint8_t c); /* static? */
 void vga_clear();
 void vga_scroll(); /* static? */
 void vga_puts(const char *str);
 void vga_move_csr();
+void vga_color(uint8_t back, uint8_t fore);
 
 #endif

@@ -2,8 +2,7 @@
 #include "gdt.h" /* gdt_init */
 #include "idt.h" /* idt_init */
 #include "isr.h" /* isr_init */
-
-extern void divzero();
+#include "irq.h" /* irq_init */
 
 void kmain()
 {
@@ -18,8 +17,11 @@ void kmain()
 
     isr_init();
     vga_puts("ISRs inicializados\n");
-    
-    divzero();
+
+    irq_init();
+    vga_puts("IRQs inicializados\n");
+
+    idt_en_ints();
 
     for (;;);
 

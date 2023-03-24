@@ -6,6 +6,7 @@
 static uint16_t *vga_mem = 0;
 static uint16_t  vga_x   = 0;
 static uint16_t  vga_y   = 0;
+static uint32_t  vga_col = VGA_BLACK_WHITE;
 
 void vga_init()
 {
@@ -22,7 +23,7 @@ void vga_putchar(uint8_t c)
     }
     else if (c >= ' ')
     {
-        vga_mem[(vga_y * VGA_W + vga_x)] = (VGA_BLACK_WHITE << 8) | c;
+        vga_mem[(vga_y * VGA_W + vga_x)] = (vga_col << 8) | c;
         vga_x++;
     }
 
@@ -41,7 +42,7 @@ void vga_clear()
     uint8_t x, y;
     uint16_t blank;
 
-    blank = 0x20 | (VGA_BLACK_WHITE << 8);
+    blank = 0x20 | (vga_col << 8);
 
     for (y = 0; y < VGA_H; y++)
         for (x = 0; x < VGA_W; x++)
@@ -57,7 +58,7 @@ void vga_scroll()
     uint16_t blank;
     uint16_t temp;
 
-    blank = 0x20 | (VGA_BLACK_WHITE << 8);
+    blank = 0x20 | (vga_col << 8);
 
     if (vga_y >= VGA_H)
     {
@@ -92,4 +93,9 @@ void vga_move_csr()
     outb(0x3D5, temp >> 8);
     outb(0x3D4, 15);
     outb(0x3D5, temp);
+}
+
+void vga_color(uint8_t back, uint8_t fore)
+{
+    vga_col = (back << 4) | (fore & VGA_BLACK_WHITE);
 }

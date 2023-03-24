@@ -28,17 +28,15 @@ void idt_init()
     idtr.limit = (sizeof(idt_entry_t) * IDT_MAX_DESCRIPTORS) - 1;
     idtr.base  = (uint32_t) idt;
 
-    /* ISRs. Usa idt_set() */
-
     idt_load();
 }
 
 void idt_en_ints()
 {
-    __asm__ volatile("sti; ret");
+    __asm__ volatile("sti");
 }
 
 void idt_dis_ints()
 {
-    __asm__ volatile("cli; ret");
+    __asm__ volatile("cli");
 }
