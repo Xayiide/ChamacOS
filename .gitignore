@@ -1,0 +1,15 @@
+# binarios y objetos
+*.bin
+*.o
+
+# Intermediarios
+*.swp
+
+# Ficheros de proyecto (por si acaso)
+*.vscode
+*.project
+*.cproject
+*.settings
+
+# Manuales
+Manuales
