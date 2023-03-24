@@ -11,7 +11,11 @@
 #define VGA_WHITE_BLACK 0xF0
 
 #define VGA_BACK_BLACK  0x00
+
+#define VGA_FORE_BLUE   0x01
+#define VGA_FORE_GREEN  0x02
 #define VGA_FORE_RED    0x04
+#define VGA_FORE_WHITE  0x0F
 
 void vga_init();
 void vga_putchar(uint8_t c); /* static? */

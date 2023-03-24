@@ -116,6 +116,7 @@ void isr_fault_handler(regs_t *r)
         vga_color(VGA_BACK_BLACK, VGA_FORE_RED);
         vga_puts(isr_exception_name[r->int_no]);
         vga_puts("\nParando el sistema!\n");
+        vga_color(VGA_BACK_BLACK, VGA_FORE_WHITE);
         while (1);
     }
 }
