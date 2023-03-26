@@ -1,9 +1,10 @@
-#include "vga.h"   /* vga_puts              */
-#include "gdt.h"   /* gdt_init              */
-#include "idt.h"   /* idt_init              */
-#include "isr.h"   /* isr_init              */
-#include "irq.h"   /* irq_init              */
-#include "timer.h" /* timer_install_handler */
+#include "vga.h" /* vga_puts            */
+#include "gdt.h" /* gdt_init            */
+#include "idt.h" /* idt_init            */
+#include "isr.h" /* isr_init            */
+#include "irq.h" /* irq_init            */
+#include "pit.h" /* pit_install_handler */
+#include "sys.h" /* sti */
 
 void kmain()
 {
@@ -22,9 +23,9 @@ void kmain()
     irq_init();
     vga_puts("IRQs inicializados\n");
 
-    idt_en_ints();
+    sti();
 
-    timer_install_handler();
+    pit_install_handler();
     vga_puts("Timer instalado\n");
 
     for (;;);

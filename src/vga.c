@@ -1,7 +1,7 @@
 #include <stdint.h> /* uint_t */
 
 #include "vga.h"
-#include "system.h"
+#include "sys.h"    /* memset */
 
 static uint16_t *vga_mem = 0;
 static uint16_t  vga_x   = 0;

@@ -20,7 +20,7 @@
 void vga_init();
 void vga_putchar(uint8_t c); /* static? */
 void vga_clear();
-void vga_scroll(); /* static? */
+void vga_scroll();
 void vga_puts(const char *str);
 void vga_move_csr();
 void vga_color(uint8_t back, uint8_t fore);

@@ -2,6 +2,7 @@
 #define _PIC_H_
 
 #define PIC1_OFFSET   0x20 /* 32 decimal. 0-31 son las interrupts de intel */
+#define PIC2_OFFSET   PIC1_OFFSET + 8
 
 #define PIC1          0x20
 #define PIC1_CMD      PIC1

@@ -1,7 +1,7 @@
 #include <stdint.h> /* uint_t */
 
 #include "idt.h"
-#include "system.h" /* memset */
+#include "sys.h" /* memset */
 
 static idt_entry_t idt[IDT_MAX_DESCRIPTORS];
 idtr_t             idtr;
@@ -29,14 +29,4 @@ void idt_init()
     idtr.base  = (uint32_t) idt;
 
     idt_load();
-}
-
-void idt_en_ints()
-{
-    __asm__ volatile("sti");
-}
-
-void idt_dis_ints()
-{
-    __asm__ volatile("cli");
 }

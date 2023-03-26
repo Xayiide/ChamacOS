@@ -1,6 +1,6 @@
 #include "isr.h"
 #include "idt.h"    /* idt_set    */
-#include "system.h" /* regs_t     */
+#include "sys.h" /* regs_t     */
 #include "vga.h"    /* vga_puts   */
 #include "gdt.h"    /* gdt macros */
 

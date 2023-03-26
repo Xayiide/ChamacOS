@@ -1,6 +1,6 @@
 #include <stdint.h> /* uint_t  */
 
-#include "system.h" /* in/outb */
+#include "sys.h" /* in/outb */
 #include "pic.h"
 
 void pic_remap(void)
@@ -18,7 +18,7 @@ void pic_remap(void)
 
     /* Manda ICW2: El despl del vector */
     outb(PIC1_DAT, PIC1_OFFSET);
-    outb(PIC2_DAT, PIC1_OFFSET + 0x08);
+    outb(PIC2_DAT, PIC2_OFFSET);
 
     /* Manda ICW3: El cableado de cada PIC */
     outb(PIC1_DAT, 0x04); /* PIC2 en IRQ2 (0000 0100)*/

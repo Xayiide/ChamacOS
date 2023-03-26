@@ -1,7 +1,7 @@
 #include <stdint.h>
 
 #include "gdt.h"
-#include "system.h"
+#include "sys.h"
 
 
 static gdt_entry_t gdt[3];

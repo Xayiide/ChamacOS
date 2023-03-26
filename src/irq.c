@@ -2,7 +2,7 @@
 
 #include "irq.h"
 #include "pic.h"    /* pic_remap */
-#include "system.h" /* regs_t    */
+#include "sys.h" /* regs_t    */
 #include "idt.h"    /* idt_set   */
 #include "gdt.h"    /* macros    */
 
@@ -62,9 +62,9 @@ void irq_init()
 
 void irq_fault_handler(regs_t *r)
 {
-    void (*handler)(regs_t *r); /* puntero vacio a funcion */
+    void (*handler)(regs_t *r); /* handler: puntero vacío a función */
 
-    handler = irq_routines[r->int_no - 32];
+    handler = irq_routines[r->int_no - PIC1_OFFSET];
     if (handler != 0)
     {
         handler(r);
@@ -72,7 +72,7 @@ void irq_fault_handler(regs_t *r)
 
     /* El índice de IDT invocado es superior a 40: enviamos un EOI al PIC
      * esclavo */
-    if (r->int_no >= 40)
+    if (r->int_no >= PIC2_OFFSET)
     {
         outb(PIC2_CMD, PIC_EOI);
     }
