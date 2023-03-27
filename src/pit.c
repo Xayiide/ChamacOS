@@ -1,9 +1,9 @@
 #include <stdint.h> /* uint_t              */
 
 #include "pit.h"
-#include "sys.h" /* in/outb, cli, sti   */
-#include "vga.h" /* print               */
-#include "irq.h" /* irq_install_handler */
+#include "sys.h"    /* in/outb, cli, sti   */
+#include "vga.h"    /* print               */
+#include "irq.h"    /* irq_install_handler */
 
 static uint32_t timer_ticks = 0;
 
@@ -24,32 +24,15 @@ void pit_set_phase(uint32_t count)
 
 void pit_handler(regs_t *r)
 {
-    static uint8_t paso = 0;
     timer_ticks++;
 
-    if (timer_ticks % 10 == 0)
+    if (timer_ticks % 18 == 0)
     {
-        vga_color(VGA_BACK_BLACK, VGA_FORE_GREEN);
-        vga_clear();
-        if (paso % 2 == 0)
-        {
-            vga_puts("\\(o_o)\n");
-            vga_puts("  ( (>\n");
-            vga_puts(" /  \\\n");
-        }
-        else
-        {
-            vga_puts(" (o_o)/\n");
-            vga_puts(" <) )\n");
-            vga_puts(" /  \\\n");
-        }
-
-        paso++;
-        vga_color(VGA_BACK_BLACK, VGA_FORE_WHITE);
+        sys_uptime_add_sec();
     }
 }
 
 void pit_install_handler()
 {
-    irq_install_handler(0, pit_handler);   
+    irq_install_handler(0, pit_handler); /* TODO: Cambiar el 0. En io.h cuando esté */
 }

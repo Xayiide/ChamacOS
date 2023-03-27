@@ -25,4 +25,6 @@ void vga_puts(const char *str);
 void vga_move_csr();
 void vga_color(uint8_t back, uint8_t fore);
 
+void printk(const char *format, ...);
+
 #endif

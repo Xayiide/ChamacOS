@@ -3,7 +3,10 @@
 
 #include "sys.h"
 
+static uint32_t uptime_seconds = 0;
 
+
+/* TODO: mover a string.h */
 void *memcpy(void *dest, const void *src, size_t n)
 {
     const char *sp;
@@ -18,6 +21,7 @@ void *memcpy(void *dest, const void *src, size_t n)
     return dest;
 }
 
+/* TODO: mover a string.h */
 void *memset(void *dest, uint8_t byte, size_t n)
 {
     uint8_t *temp;
@@ -30,6 +34,7 @@ void *memset(void *dest, uint8_t byte, size_t n)
     return dest;
 }
 
+/* TODO: mover a string.h */
 void *memsetw(void *dest, uint16_t val, size_t n)
 {
     uint16_t *temp;
@@ -42,6 +47,7 @@ void *memsetw(void *dest, uint16_t val, size_t n)
     return dest;
 }
 
+/* TODO: mover a string.h */
 size_t strlen(const char *s)
 {
     size_t ret;
@@ -50,6 +56,16 @@ size_t strlen(const char *s)
         ret++;
 
     return ret;
+}
+
+void sys_uptime_add_sec()
+{
+    uptime_seconds++;
+}
+
+uint32_t sys_uptime()
+{
+    return uptime_seconds;
 }
 
 uint8_t inb(uint16_t port)
@@ -73,4 +89,23 @@ void cli()
 void sti()
 {
     __asm__ volatile("sti");
+}
+
+char *changebase(int32_t num, base_t base)
+{
+    static char repr[] = "0123456789ABCDEF";
+    static char buff[50];
+
+    char *ptr;
+
+    ptr  = &buff[49];
+    *ptr = '\0';
+
+    do
+    {
+        *--ptr = repr[num % base];
+        num /= base;
+    } while (num != 0);
+
+    return ptr;
 }

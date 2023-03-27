@@ -1,9 +1,10 @@
-#include "vga.h" /* vga_puts            */
+#include "vga.h" /* vga_puts, printk    */
 #include "gdt.h" /* gdt_init            */
 #include "idt.h" /* idt_init            */
 #include "isr.h" /* isr_init            */
 #include "irq.h" /* irq_init            */
 #include "pit.h" /* pit_install_handler */
+#include "kb.h"  /* kb_install_handler  */
 #include "sys.h" /* sti */
 
 void kmain()
@@ -25,8 +26,14 @@ void kmain()
 
     sti();
 
+    printk("11918 en hex es: 0x%x\n", 16);
+    printk("El caracter 16 es: '%c'\n", 16);
+
     pit_install_handler();
-    vga_puts("Timer instalado\n");
+    printk("Timer instalado\n");
+
+    kb_install_handler();
+    printk("Teclado instalado\n");
 
     for (;;);
 

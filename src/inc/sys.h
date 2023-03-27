@@ -4,6 +4,12 @@
 #include <stddef.h> /* size_t */
 #include <stdint.h> /* uint_t */
 
+typedef enum
+{
+    BASE_10 = 10,
+    BASE_16 = 16
+} base_t;
+
 typedef struct
 {
     uint32_t gs, fs, es, ds;
@@ -18,11 +24,19 @@ void   *memset (void *dest, uint8_t byte, size_t n);
 void   *memsetw(void *dest, uint16_t val, size_t n);
 size_t  strlen (const char *s);
 
+/* estadísticas del sistema */
+void     sys_uptime_add_sec();
+uint32_t sys_uptime();
+
 /* io (futuro) */
 uint8_t inb(uint16_t port);
 void    outb(uint16_t port, uint8_t val);
 
-void    cli();
-void    sti();
+/* activar y desactivar interrupciones */
+void    sti(); /* activar    */
+void    cli(); /* desactivar */
+
+/* misceláneo */
+char *changebase(int32_t num, base_t base);
 
 #endif

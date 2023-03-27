@@ -1,6 +1,6 @@
 #include <stdint.h> /* uint_t  */
 
-#include "sys.h" /* in/outb */
+#include "sys.h"    /* in/outb */
 #include "pic.h"
 
 void pic_remap(void)

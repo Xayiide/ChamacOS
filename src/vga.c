@@ -1,4 +1,5 @@
 #include <stdint.h> /* uint_t */
+#include <stdarg.h> /* va_arg */
 
 #include "vga.h"
 #include "sys.h"    /* memset */
@@ -98,4 +99,55 @@ void vga_move_csr()
 void vga_color(uint8_t back, uint8_t fore)
 {
     vga_col = (back << 4) | (fore & VGA_BLACK_WHITE);
+}
+
+/* TODO sacar a otro fichero (stdio.h) */
+void printk(const char *format, ...)
+{
+    const char *curr = format;
+    int32_t     num;
+    char       *str;
+    va_list     arg;
+
+    va_start(arg, format);
+
+    while (*curr != '\0')
+    {
+        if (*curr == '%')
+        {
+            curr++; /* Avanzamos al caracter siguiente */
+            switch (*curr)
+            {
+            case 'c':
+                num = va_arg(arg, int32_t);
+                vga_puts((const char *) &num);
+                break;
+            case 'd':
+                num = va_arg(arg, int32_t);
+                if (num < 0)
+                {
+                    num = -num;
+                    vga_puts("-\0");
+                }
+                vga_puts(changebase(num, BASE_10));
+                break;
+            case 's':
+                str = va_arg(arg, char *);
+                vga_puts(str);
+                break;
+            case 'x':
+                num = va_arg(arg, uint32_t);
+                vga_puts(changebase(num, BASE_16));
+                break;
+            default:
+                break;
+            }
+        }
+        else
+        {
+            vga_putchar(*curr);
+        }
+        curr++;
+    }
+    va_end(arg);
 }
