@@ -105,8 +105,6 @@ void vga_color(uint8_t back, uint8_t fore)
 void printk(const char *format, ...)
 {
     const char *curr = format;
-    int32_t     num;
-    char       *str;
     va_list     arg;
 
     va_start(arg, format);
@@ -118,27 +116,31 @@ void printk(const char *format, ...)
             curr++; /* Avanzamos al caracter siguiente */
             switch (*curr)
             {
-            case 'c':
-                num = va_arg(arg, int32_t);
-                vga_puts((const char *) &num);
+            case 'c': {
+                int c = va_arg(arg, int);
+                vga_puts((const char *) &c);
                 break;
-            case 'd':
-                num = va_arg(arg, int32_t);
-                if (num < 0)
+            }
+            case 'd': {
+                int d = va_arg(arg, int);
+                if (d < 0)
                 {
-                    num = -num;
+                    d = -d;
                     vga_puts("-\0");
                 }
-                vga_puts(changebase(num, BASE_10));
+                vga_puts(changebase((uint32_t) d, BASE_10));
                 break;
-            case 's':
-                str = va_arg(arg, char *);
-                vga_puts(str);
+            }
+            case 's': {
+                char *s = va_arg(arg, char *);
+                vga_puts(s);
                 break;
-            case 'x':
-                num = va_arg(arg, uint32_t);
-                vga_puts(changebase(num, BASE_16));
+            }
+            case 'x': {
+                int x = va_arg(arg, uint32_t);
+                vga_puts(changebase(x, BASE_16));
                 break;
+            }
             default:
                 break;
             }

@@ -37,6 +37,6 @@ void    sti(); /* activar    */
 void    cli(); /* desactivar */
 
 /* misceláneo */
-char *changebase(int32_t num, base_t base);
+char *changebase(uint32_t num, base_t base);
 
 #endif

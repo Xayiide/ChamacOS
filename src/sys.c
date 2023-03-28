@@ -91,7 +91,7 @@ void sti()
     __asm__ volatile("sti");
 }
 
-char *changebase(int32_t num, base_t base)
+char *changebase(uint32_t num, base_t base)
 {
     static char repr[] = "0123456789ABCDEF";
     static char buff[50];

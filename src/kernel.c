@@ -26,8 +26,15 @@ void kmain()
 
     sti();
 
-    printk("11918 en hex es: 0x%x\n", 16);
-    printk("El caracter 16 es: '%c'\n", 16);
+    int v1  = 31312;
+    char c1 = 'c';
+
+    printk("v1 vale %d\n", v1);
+    printk("v1 en hex: 0x%x\n", v1);
+
+    printk("c1 vale %c\n", c1);
+    printk("c1 en hex: 0x%x\n", c1);
+    printk("c1 en dec: %d\n", c1);
 
     pit_install_handler();
     printk("Timer instalado\n");
