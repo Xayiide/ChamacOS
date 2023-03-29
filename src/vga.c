@@ -1,8 +1,9 @@
-#include <stdint.h> /* uint_t */
-#include <stdarg.h> /* va_arg */
+#include <stdint.h> /* uint_t   */
+#include <stdarg.h> /* va_arg   */
 
 #include "vga.h"
-#include "sys.h"    /* memset */
+#include "io.h"     /* inb outb */
+#include "sys.h"    /* memset   */
 
 static uint16_t *vga_mem = 0;
 static uint16_t  vga_x   = 0;
@@ -90,10 +91,11 @@ void vga_move_csr()
 
     temp = vga_y * VGA_W + vga_x;
 
-    outb(0x3D4, 14);
-    outb(0x3D5, temp >> 8);
-    outb(0x3D4, 15);
-    outb(0x3D5, temp);
+    /* TODO: mover a I/O */
+    outb(IO_VGA_CTR, 14);
+    outb(IO_VGA_DAT, temp >> 8);
+    outb(IO_VGA_CTR, 15);
+    outb(IO_VGA_DAT, temp);
 }
 
 void vga_color(uint8_t back, uint8_t fore)

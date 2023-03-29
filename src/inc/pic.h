@@ -4,13 +4,13 @@
 #define PIC1_OFFSET   0x20 /* 32 decimal. 0-31 son las interrupts de intel */
 #define PIC2_OFFSET   PIC1_OFFSET + 8
 
-#define PIC1          0x20
-#define PIC1_CMD      PIC1
-#define PIC1_DAT      0x21
+//#define PIC1          0x20
+//#define PIC1_CMD      PIC1
+//#define PIC1_DAT      0x21
 
-#define PIC2          0xA0
-#define PIC2_CMD      PIC2
-#define PIC2_DAT      0xA1
+//#define PIC2          0xA0
+//#define PIC2_CMD      PIC2
+//#define PIC2_DAT      0xA1
 
 #define PIC_ICW1_INIT 0x11
 #define PIC_ICW4_8086 0x01 /* Modo 8086/88         */

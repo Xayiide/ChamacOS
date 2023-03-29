@@ -17,6 +17,9 @@
 #define VGA_FORE_RED    0x04
 #define VGA_FORE_WHITE  0x0F
 
+//#define VGA_IO_CTRL 0x3D4
+//#define VGA_IO_DATA 0x3D5
+
 void vga_init();
 void vga_putchar(uint8_t c); /* static? */
 void vga_clear();

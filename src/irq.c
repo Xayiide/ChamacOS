@@ -1,10 +1,11 @@
 #include <stdint.h> /* uint_t */
 
 #include "irq.h"
-#include "pic.h"    /* pic_remap */
+#include "io.h"  /* inb outb  */
+#include "pic.h" /* pic_remap */
 #include "sys.h" /* regs_t    */
-#include "idt.h"    /* idt_set   */
-#include "gdt.h"    /* macros    */
+#include "idt.h" /* idt_set   */
+#include "gdt.h" /* macros    */
 
 
 extern void irq0();
@@ -74,7 +75,7 @@ void irq_fault_handler(regs_t *r)
      * esclavo */
     if (r->int_no >= PIC2_OFFSET)
     {
-        outb(PIC2_CMD, PIC_EOI);
+        outb(IO_PIC2_CMD, PIC_EOI);
     }
-    outb(PIC1_CMD, PIC_EOI); /* Y siempre se lo tenemos que enviar al master */
+    outb(IO_PIC1_CMD, PIC_EOI); /* Y siempre se lo tenemos que enviar al master */
 }

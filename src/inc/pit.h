@@ -3,10 +3,10 @@
 
 #include <stdint.h> /* uint_t */
 
-#define PIT_CH0_DATA 0x40
-#define PIT_CH1_DATA 0x41
-#define PIT_CH2_DATA 0x42
-#define PIT_CMD      0x43 /* solo escritura */
+//#define PIT_CH0_DATA 0x40
+//#define PIT_CH1_DATA 0x41
+//#define PIT_CH2_DATA 0x42
+//#define PIT_CMD      0x43 /* solo escritura */
 
 #define PIT_OSC_FQ   1193182 /* Frecuencia del oscilador del PIT */
 

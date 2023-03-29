@@ -1,7 +1,8 @@
 #include <stdint.h> /* uint_t              */
 
 #include "pit.h"
-#include "sys.h"    /* in/outb, cli, sti   */
+#include "io.h"     /* inb outb */
+#include "sys.h"    /* cli, sti            */
 #include "vga.h"    /* print               */
 #include "irq.h"    /* irq_install_handler */
 
@@ -16,9 +17,9 @@ void pit_set_phase(uint32_t count)
     cmd = (PIT_SEL_CH0 | PIT_AM_LOHI | PIT_OPM_3 | PIT_BIN);
 
     divisor = PIT_OSC_FQ / count;
-    outb(PIT_CMD, cmd);           /* 0x36 */
-    outb(PIT_CH0_DATA, divisor & 0xFF); /* Low byte of divisor  */
-    outb(PIT_CH0_DATA, divisor >> 8);   /* High byte of divisor */
+    outb(IO_PIT_CMD, cmd);           /* 0x36 */
+    outb(IO_PIT_CH0_DAT, divisor & 0xFF); /* Low byte of divisor  */
+    outb(IO_PIT_CH0_DAT, divisor >> 8);   /* High byte of divisor */
 }
 
 
