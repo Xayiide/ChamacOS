@@ -29,6 +29,8 @@ mboot:
 
 stublet:
     extern kmain
+    push eax        ; multiboot: magic
+    push ebx        ; multiboot: info structure
     call kmain
 
     jmp $

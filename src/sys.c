@@ -2,6 +2,7 @@
 #include <stdint.h> /* uint_t */
 
 #include "sys.h"
+#include "vga.h" /* printk */
 
 static uint32_t uptime_seconds = 0;
 
@@ -95,4 +96,10 @@ char *changebase(uint32_t num, base_t base)
     } while (num != 0);
 
     return ptr;
+}
+
+volatile void panic(const char *str)
+{
+    printk("Kernel panic: %s\n", str);
+    for (;;);
 }

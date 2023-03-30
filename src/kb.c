@@ -14,12 +14,12 @@ void kb_handler(regs_t *r)
 
     if (scancode & KB_KEY_RELEASED)
     {
-        printk("Soltada la tecla %x\n", scancode);
+        //printk("Soltada la tecla %x\n", scancode);
         /* Se ha soltado el shift, ctrl, alt */
     }
     else
     {
-        printk("Apretada la tecla %x\n", scancode);
+        //printk("Apretada la tecla %x\n", scancode);
         /* Si se mantiene la tecla pulsada seguiremos recibiendo ints. */
         /* 1. Traducir el scancode a ASCII
          * 2. Imprimir el ASCII que sea */
