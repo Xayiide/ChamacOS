@@ -25,7 +25,7 @@ QOPT = -gdb tcp::26000 -S
 .PHONY: all clean re qemu fqemu
 
 FILES = boot.o sys.o vga.o gdt.o idt.o isr.o pic.o irq.o pit.o io.o kb.o \
-		kernel.o
+		pmm.o kernel.o
 
 all: 
 	nasm -f elf boot.asm -o boot.o
@@ -39,6 +39,7 @@ all:
 	$(CC) $(CFLAG) $(IFLAG) -c pit.c    -o pit.o
 	$(CC) $(CFLAG) $(IFLAG) -c io.c     -o io.o
 	$(CC) $(CFLAG) $(IFLAG) -c kb.c     -o kb.o
+	$(CC) $(CFLAG) $(IFLAG) -c pmm.c    -o pmm.o
 	$(CC) $(CFLAG) $(IFLAG) -c kernel.c -o kernel.o
 	$(LD) -g -relocatable $(FILES) -o kernelfull.o # nuevo
 	$(CC) $(CFLAG) -T linker.ld kernelfull.o -o kernel.bin
@@ -54,4 +55,4 @@ qemu: re
 	$(QEMU) kernel.bin $(QOPT)
 
 fqemu: re
-	$(QEMU) kernel.bin
+	$(QEMU) kernel.bin -m 128M

@@ -4,6 +4,10 @@
 #include <stddef.h> /* size_t */
 #include <stdint.h> /* uint_t */
 
+#ifndef NULL
+    #define NULL ((void *) 0)
+#endif
+
 typedef enum
 {
     BASE_10 = 10,

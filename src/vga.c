@@ -147,6 +147,10 @@ void printk(const char *format, ...)
                 break;
             }
         }
+        else if (*curr == '\t')
+        {
+            vga_puts("    ");
+        }
         else
         {
             vga_putchar(*curr);
