@@ -14,7 +14,10 @@
 
 #define VGA_FORE_BLUE   0x01
 #define VGA_FORE_GREEN  0x02
+#define VGA_FORE_CYAN   0x03
 #define VGA_FORE_RED    0x04
+#define VGA_FORE_MAGEN  0x05
+#define VGA_FORE_BROWN  0x06
 #define VGA_FORE_WHITE  0x0F
 
 //#define VGA_IO_CTRL 0x3D4
