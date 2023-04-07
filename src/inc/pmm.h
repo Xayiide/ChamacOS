@@ -20,9 +20,11 @@ typedef struct
     uint32_t installed_mem; /* RAM total instalada (128 MB)  */
     uint32_t usable_mem;    /* RAM total que usamos (400 KB) */
     uint32_t free_mem;      /* De la RAM usable, la no usada */
-    uint8_t *map_addr;
-    uint32_t map_size;
+    uint8_t *map_addr;      /* Dir. de la tabla de frames    */
+    uint32_t map_size;      /* Tamaño de la tabla de frames  */
 } pmm_info_t;
+
+
 
 
 /* Tenemos que almacenar la siguiente información:
@@ -43,7 +45,10 @@ typedef struct
 
 
 
-void pmm_init(multiboot_info_t *mbd, uint32_t magic);
+void  pmm_init(multiboot_info_t *mbd, uint32_t magic);
+void *pmm_alloc_frame(void);
+void *pmm_alloc_frames(uint32_t n);
+void  pmm_free_frame(void *frame);
 
 pmm_info_t *pmm_get_meminfo(void);
 
