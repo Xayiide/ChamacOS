@@ -7,9 +7,6 @@
 
 typedef multiboot_memory_map_t multiboot_mmap_t; /* Ahorrar espacio */
 
-/* TODO: hacer macros para comprobar si un frame está libre, si está usado, si
- * es el primero o si tiene siguiente */
-
 /* TODO: hacer macro para convertir de indice del mapa a dirección, y
  * viceversa */
 
@@ -95,10 +92,11 @@ static void pmm_map_entry_set(uint32_t index, uint8_t status)
 {
     if (index >= PMM_NUM_FRAMES)
     {
+        printk("(index: %d)\n", index);
         panic("pmm_map_entry_set: index out of range");
     }
 
-    if ((status & PMM_FRAME_USED) == PMM_FRAME_FREE)
+    if (PMM_IS_FREE(status))
     {
         pmm_meminfo.free_mem += PMM_FRAME_SIZE;
     }
@@ -107,6 +105,7 @@ static void pmm_map_entry_set(uint32_t index, uint8_t status)
         pmm_meminfo.free_mem -= PMM_FRAME_SIZE;
     }
 
+    //printk("free memory: %d\n", pmm_meminfo.free_mem);
     pmm_meminfo.map_addr[index] = status;
 }
 
@@ -126,19 +125,30 @@ static uint8_t pmm_map_entry_get(uint32_t index)
 
 static void pmm_test(void)
 {
-    void *frame;
+    int   i;
+    void *frame1;
     void *frame2;
-    void *frame3;
 
-    frame  = pmm_alloc_frame();
-    frame2 = pmm_alloc_frames(5);
-    frame3 = pmm_alloc_frame();
+    printk(" ===== MEMORY TEST =====\n");
 
-    pmm_free_frame(frame);
-    printk("-\n");
+    for (i = 0; i < 99; i++)
+    {
+        pmm_alloc_frame();
+    }
+
+    for (i = 1; i < 100; i++)
+    {
+        pmm_free_frame((void *) (PMM_BASE_ADDR + (i * 4096)));
+    }
+
+    frame1 = pmm_alloc_frames(50);
+    printk("frame: 0x%x\n", frame1);
+    frame2 = pmm_alloc_frames(25);
+    printk("frame: 0x%x\n", frame2);
+
+    pmm_free_frame(frame1);
     pmm_free_frame(frame2);
-    printk("-\n");
-    pmm_free_frame(frame3);
+
 }
 
 
@@ -146,6 +156,9 @@ static void pmm_test(void)
 
 void pmm_init(multiboot_info_t *mbd, uint32_t magic)
 {
+    uint32_t i;
+
+
     pmm_check_magic(mbd, magic);
     
     pmm_fill_meminfo(mbd);
@@ -155,17 +168,20 @@ void pmm_init(multiboot_info_t *mbd, uint32_t magic)
     /* Pon a 0 la memoria de la tabla de frames */
     memset(pmm_meminfo.map_addr, PMM_FRAME_FREE, pmm_meminfo.map_size);
 
+
     pmm_meminfo.free_mem = 0;
 
+
+    /* Marca el resto de frames como disponibles */
+    for (i = 0; i < PMM_NUM_FRAMES; i++)
+    {
+        pmm_map_entry_set(i, PMM_FRAME_FREE);
+    }
 
     /* Marca la primera frame como no disponible (es donde está la tabla) */
     pmm_map_entry_set(0, PMM_FRAME_USED);
 
-    /* Marca el resto de frames como disponibles */
-    for (int i = 1; i < PMM_NUM_FRAMES; i++)
-    {
-        pmm_map_entry_set(i, PMM_FRAME_FREE);
-    }
+    printk("Memoria libre: %d KB\n", pmm_meminfo.free_mem / 1024);
 
     pmm_test();
 
@@ -187,11 +203,13 @@ void *pmm_alloc_frame(void)
     for (i = 0; i < PMM_NUM_FRAMES; i++)
     {
         uint8_t map_entry = pmm_map_entry_get(i);
-        if ((map_entry & PMM_FRAME_USED) == PMM_FRAME_FREE)
+        if (PMM_IS_FREE(map_entry))
         {
             pmm_map_entry_set(i, PMM_FRAME_USED);
             frame = (void *) PMM_BASE_ADDR + (i * PMM_FRAME_SIZE);
-            printk("Reservando 1 frame en la pos 0x%x (indice %d)\n", (uint32_t) frame, i);
+            printk("Reservando 1 frame en la pos 0x%x (indice %d",
+                    (uint32_t) frame, i);
+            printk(", libre: %d KB)\n", pmm_meminfo.free_mem / 1024);
             break;
         }
     }
@@ -214,7 +232,7 @@ void *pmm_alloc_frames(uint32_t num_frames)
     for (i = 0; i < PMM_NUM_FRAMES; i++)
     {
         entry = pmm_map_entry_get(i);
-        if ((entry & PMM_FRAME_USED) == PMM_FRAME_FREE)
+        if (PMM_IS_FREE(entry))
         {
             cons++;
             if (cons == 1)
@@ -235,14 +253,17 @@ void *pmm_alloc_frames(uint32_t num_frames)
 
     if (found == 1)
     {
-        printk("Reservando %d frames en la pos 0x%x (indice %d)\n",
-                num_frames, (PMM_BASE_ADDR + (index * PMM_FRAME_SIZE)), index);
-        for (i = index; i < num_frames; i++)
+        printk("Reservando %d frames en la pos 0x%x (%d -> %d)\n",
+                num_frames, PMM_INDX2ADDR(index),
+                index, index + (num_frames - 1));
+        pmm_map_entry_set(index,
+                (PMM_FRAME_FIRST | PMM_FRAME_NEXT | PMM_FRAME_USED));
+        for (i = index + 1; i < (num_frames + index) - 1; i++)
         {
             pmm_map_entry_set(i, PMM_FRAME_NEXT | PMM_FRAME_USED);
         }
-        pmm_map_entry_set(i+1, PMM_FRAME_USED);
-        return (void *) (PMM_BASE_ADDR) + (index * PMM_FRAME_SIZE);
+        pmm_map_entry_set(i, PMM_FRAME_USED);
+        return (void *) PMM_INDX2ADDR(index);
     }
     else
     {
@@ -253,14 +274,14 @@ void *pmm_alloc_frames(uint32_t num_frames)
 
 }
 
-/* TODO: Cuando se estén liberando varios frames, recorrer primero
- * hacia la izquierda hasta encontrar el primer indice. Luego empezar
- * a liberar desde ahí. Para no liberar a medias */
+/*
+ * Marca la entrada correspondiente a la dirección frame como libre
+ */
 void pmm_free_frame(void *frame)
 {
     uint32_t index;
     uint8_t  entry;
-    
+
     /* Comprueba los límites.
      * Dentro de estos límites: No se puede hacer free al primer frame
      *  porque ahí está el mapa de memoria. Tampoco se puede hacer free a
@@ -279,7 +300,7 @@ void pmm_free_frame(void *frame)
     }
 
     /* Calcula el índice a partir de la dirección */
-    index = (uint32_t) (frame - PMM_BASE_ADDR) / PMM_FRAME_SIZE;
+    index = PMM_ADDR2INDX(frame);
 
     /* No debería poder darse este caso porque antes comprobamos que no
      * se pueda hacer free al primer frame (0x00200000 - 0x00201000) */
@@ -289,16 +310,48 @@ void pmm_free_frame(void *frame)
     }
 
     entry = pmm_map_entry_get(index);
-    /* Marca entries como libres mientras las entries tengan el flag
-     * de NEXT activo */
-    do
+    /* Caso 1: La entrada ya está libre. Imprimimos un warning y ya está.
+     * Caso 2: La entrada se reservó ella sola. La liberamos y ya.
+     * Caso 3: La entrada es la primera. La liberamos y liberamos mientras
+               todas las entradas siguientes que tengan PMM_FRAME_NEXT activo.
+       Caso 4: La entrada tiene siguiente pero no es la primera. En este caso
+               se ha llamado a free sobre una frame intermedia. Ignoramos este
+               caso para no complicarlo por ahora. Podríamos recorrer hacia
+               atrás hasta encontrar el primer frame y ahí aplicar el caso 3,
+               pero por ahora ignoraremos este caso. */
+    if (PMM_IS_FREE(entry) == 1)
     {
-        printk("Liberando frame en el indice %d\n", index);
+        printk("WARNING: Called free on an empty frame (indx: %d)\n", index);
+    }
+    else if (PMM_IS_FIRST(entry) == 0 && PMM_HAS_NEXT(entry) == 0)
+    {
         pmm_map_entry_set(index, PMM_FRAME_FREE);
-        pmm_meminfo.free_mem += PMM_FRAME_SIZE;
+        printk("[2] Liberando entry (0x%x) en el indice %d", entry, index);
+        printk(", libre: %d KB\n", pmm_meminfo.free_mem / 1024);
+    }
+    else if (PMM_IS_FIRST(entry) == 1)
+    {
+        pmm_map_entry_set(index, PMM_FRAME_FREE);
+        printk("[3] Liberando entry (0x%x) en el indice %d", entry, index);
+        printk(", libre: %d KB\n", pmm_meminfo.free_mem / 1024);
+        printk("Liberando entries... ");
         index++;
         entry = pmm_map_entry_get(index);
-    } while ((entry & PMM_FRAME_NEXT) == PMM_FRAME_NEXT);
+        while (PMM_HAS_NEXT(entry) == 1 && PMM_IS_FIRST(entry) == 0)
+        {
+            pmm_map_entry_set(index, PMM_FRAME_FREE);
+            printk("%d ", index);
+            index++;
+            entry = pmm_map_entry_get(index);
+        }
+        pmm_map_entry_set(index, PMM_FRAME_FREE);
+        printk("%d ", index);
+        printk("\n Libre: %d KB\n", pmm_meminfo.free_mem / 1024);
+    }
+    else if (PMM_IS_FIRST(entry) == 0 && PMM_HAS_NEXT(entry) == 1)
+    {
+
+    }
 }
 
 

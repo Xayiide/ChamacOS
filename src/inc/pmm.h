@@ -10,10 +10,10 @@
 #define PMM_MEM_SIZE   PMM_FRAME_SIZE * PMM_NUM_FRAMES /* 400 KB */
 
 /* Frame entry */
-#define PMM_FRAME_FREE  0x00
-#define PMM_FRAME_USED  0x01
-#define PMM_FRAME_FIRST 0x80
-#define PMM_FRAME_NEXT  0x40
+#define PMM_FRAME_FREE  0x00 /* 0000 0000 */
+#define PMM_FRAME_USED  0x01 /* 0000 0001 */
+#define PMM_FRAME_NEXT  0x41 /* 0100 0000 -> FRAME_NEXT incluye FRAME_USED  */
+#define PMM_FRAME_FIRST 0xC1 /* 1100 0000 -> FRAME_FIRST incluye FRAME_NEXT */
 
 typedef struct 
 {
@@ -26,6 +26,28 @@ typedef struct
 
 
 
+#define PMM_IS_FREE(f)                          \
+({                                              \
+    ((f & PMM_FRAME_USED) == PMM_FRAME_USED) ?  \
+        0 : 1;                                  \
+})
+
+#define PMM_HAS_NEXT(f)                         \
+({                                              \
+    ((f & PMM_FRAME_NEXT) == PMM_FRAME_NEXT) ?  \
+        1 : 0;                                  \
+})
+
+#define PMM_IS_FIRST(f)                          \
+({                                               \
+    ((f & PMM_FRAME_FIRST) == PMM_FRAME_FIRST) ? \
+        1 : 0;                                   \
+})
+
+
+#define PMM_INDX2ADDR(indx) (PMM_BASE_ADDR + (indx * PMM_FRAME_SIZE))
+
+#define PMM_ADDR2INDX(addr) (uint32_t) (addr - PMM_BASE_ADDR) / PMM_FRAME_SIZE
 
 /* Tenemos que almacenar la siguiente información:
  * - Dir inicio: 0x0020_0000 (Empezado el segundo MB para no borrar info
