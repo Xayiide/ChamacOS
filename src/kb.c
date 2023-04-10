@@ -6,24 +6,37 @@
 #include "vga.h" /* pritnk              */
 #include "irq.h" /* irq_install_handler */
 
+#include "pit.h" /* pit_get_ticks       */
+
+/* Esta función se está llamando dos veces cada vez que pulso una tecla (una
+ * cuando pulso, otra cuando suelto). Para solucionarlo por ahora pongo un
+ * contador estático */
 void kb_handler(regs_t *r)
 {
-    uint8_t scancode;
+    static uint8_t  count = 0;
+    static uint16_t div   = 0;
+
+    uint32_t ticks;
+    uint32_t uptime;
+    uint8_t  scancode;
+
+
+    count++;
 
     scancode = inb(IO_KB_DAT);
 
-    if (scancode & KB_KEY_RELEASED)
-    {
-        //printk("Soltada la tecla %x\n", scancode);
-        /* Se ha soltado el shift, ctrl, alt */
+    if (count == 2) {
+        count  = 0;
+        ticks  = pit_get_ticks();
+        //ticks  = (uint32_t) pit_get_count();
+        uptime = sys_uptime();
+        printk("[Timer ticks: %d (%d s)]\n", ticks, uptime);
+        pit_set_phase(div);
+        div += 2000;
     }
-    else
-    {
-        //printk("Apretada la tecla %x\n", scancode);
-        /* Si se mantiene la tecla pulsada seguiremos recibiendo ints. */
-        /* 1. Traducir el scancode a ASCII
-         * 2. Imprimir el ASCII que sea */
-    }
+
+    if (scancode) {}; /* Para que no se queje el compilador */
+
 }
 
 void kb_install_handler()

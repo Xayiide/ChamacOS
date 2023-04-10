@@ -3,12 +3,12 @@
 
 #include <stdint.h> /* uint_t */
 
-//#define PIT_CH0_DATA 0x40
-//#define PIT_CH1_DATA 0x41
-//#define PIT_CH2_DATA 0x42
-//#define PIT_CMD      0x43 /* solo escritura */
+/* La frecuencia más baja que se puede conseguir es poniendo el divisor de
+ * frecuencia a 0 (lo hace la BIOS por defecto) lo cual da un divisor con
+ * valor 65536. Esto provoca una frecuencia de salida de 18.2065 Hz, es decir,
+ * un IRQ cada 54.9254 ms. Esta es nuestra configuración por defecto. */
 
-#define PIT_OSC_FQ   1193182 /* Frecuencia del oscilador del PIT */
+#define PIT_OSC_FQ   1193182 /* Frecuencia del osc. del PIT: 1.193182 MHz */
 
 /* Channel select     [BB______] */
 #define PIT_SEL_CH0  0b00000000
@@ -34,8 +34,11 @@
 #define PIT_BIN      0b00000000 /* 16-bit binary                    */
 #define PIT_BCD      0b00000001 /* 4-digit BCD                      */
 
+uint32_t pit_get_ticks(void);
 
-void pit_set_phase(uint32_t count);
-void pit_install_handler();
+void     pit_set_phase(uint16_t count);
+void     pit_install_handler(void);
+uint16_t pit_get_count(void);
+
 
 #endif

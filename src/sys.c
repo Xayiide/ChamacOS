@@ -59,6 +59,8 @@ size_t strlen(const char *s)
     return ret;
 }
 
+
+
 void sys_uptime_add_sec()
 {
     uptime_seconds++;
@@ -68,6 +70,7 @@ uint32_t sys_uptime()
 {
     return uptime_seconds;
 }
+
 
 void cli()
 {
@@ -79,6 +82,7 @@ void sti()
     __asm__ volatile("sti");
 }
 
+/* TODO: mover a math.h? */
 char *changebase(uint32_t num, base_t base)
 {
     static char repr[] = "0123456789ABCDEF";
