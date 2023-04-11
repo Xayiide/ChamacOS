@@ -8,14 +8,21 @@
 
 static void pit_handler(regs_t *r);
 
-static uint32_t timer_ticks = 0;
-
+static pit_info_t pit_info = {
+        .num_ints = 0,
+        .ints_sec = 0
+};
 
 static void pit_handler(regs_t *r)
 {
-    timer_ticks++;
+    pit_info.num_ints++; /* FIXME: cuando se desborda, el mód es incorrecto */
 
-    if (timer_ticks % 18 == 0)
+    /* TODO: para mayor exactitud, cuando se cambia ints_sec (pit_set_phase)
+     * también habría que cambiar num_ints en proporción. Por ejemplo si
+     * estábamos con 18 ticks por segundo y cuando ya hemos contado 17 el
+     * ints_sec cambia a 36 ticks por segundo, num_ints debería pasar a
+     * ser 34 para no perder proporcionalidad */
+    if (pit_info.num_ints % pit_info.ints_sec == 0)
     {
         sys_uptime_add_sec();
     }
@@ -23,34 +30,32 @@ static void pit_handler(regs_t *r)
 
 
 
-uint32_t pit_get_ticks(void)
+uint32_t pit_get_num_ints(void)
 {
-    return timer_ticks;
+    return pit_info.num_ints;
+}
+
+uint32_t pit_get_freq(void)
+{
+    return pit_info.ints_sec;
 }
 
 void pit_set_phase(uint16_t count)
 {
-    /* cli() ? */
     cli();
 
-    uint32_t divisor = 0;
-    uint8_t  cmd = 0;
-
-    if (count == 0)
-        return;
-
-    if (divisor | cmd) {}; /* compilador */
-
-    cmd = (PIT_SEL_CH0 | PIT_AM_LOHI | PIT_OPM_3 | PIT_BIN); /* 0x36 */
-
-    divisor = PIT_OSC_FQ / count;
-    //outb(IO_PIT_CMD, cmd);
     outb(IO_PIT_CH0_DAT, count & 0xFF);            /* Low byte of divisor  */
     outb(IO_PIT_CH0_DAT, (count & 0xFF00) >> 8);   /* High byte of divisor */
+
+    sti();
+
+    pit_info.ints_sec = (uint32_t) PIT_OSC_FQ / (count == 0 ? 65536 : count);
+    printk("ints_sec: %d\n", pit_info.ints_sec);
 }
 
 void pit_install_handler(void)
 {
+    pit_set_phase(62799); /* fosc/62799 = 19.000015924 Hz */
     irq_install_handler(0, pit_handler); /* TODO: Cambiar el 0. En io.h cuando esté */
 }
 

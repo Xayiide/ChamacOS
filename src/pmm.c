@@ -183,7 +183,7 @@ void pmm_init(multiboot_info_t *mbd, uint32_t magic)
 
     printk("Memoria libre: %d KB\n", pmm_meminfo.free_mem / 1024);
 
-    pmm_test();
+    //pmm_test();
 
 }
 
@@ -207,9 +207,11 @@ void *pmm_alloc_frame(void)
         {
             pmm_map_entry_set(i, PMM_FRAME_USED);
             frame = (void *) PMM_BASE_ADDR + (i * PMM_FRAME_SIZE);
+#ifdef DEBUG_PMM
             printk("Reservando 1 frame en la pos 0x%x (indice %d",
                     (uint32_t) frame, i);
             printk(", libre: %d KB)\n", pmm_meminfo.free_mem / 1024);
+#endif
             break;
         }
     }
@@ -253,9 +255,11 @@ void *pmm_alloc_frames(uint32_t num_frames)
 
     if (found == 1)
     {
+#ifdef DEBUG_PMM
         printk("Reservando %d frames en la pos 0x%x (%d -> %d)\n",
                 num_frames, PMM_INDX2ADDR(index),
                 index, index + (num_frames - 1));
+#endif
         pmm_map_entry_set(index,
                 (PMM_FRAME_FIRST | PMM_FRAME_NEXT | PMM_FRAME_USED));
         for (i = index + 1; i < (num_frames + index) - 1; i++)
@@ -267,8 +271,10 @@ void *pmm_alloc_frames(uint32_t num_frames)
     }
     else
     {
+#ifdef DEBUG_PMM
         printk("No se han encontrado %d frames consecutivas libres\n",
                 num_frames);
+#endif
         return NULL;
     }
 
@@ -326,27 +332,35 @@ void pmm_free_frame(void *frame)
     else if (PMM_IS_FIRST(entry) == 0 && PMM_HAS_NEXT(entry) == 0)
     {
         pmm_map_entry_set(index, PMM_FRAME_FREE);
+#ifdef DEBUG_PMM
         printk("[2] Liberando entry (0x%x) en el indice %d", entry, index);
         printk(", libre: %d KB\n", pmm_meminfo.free_mem / 1024);
+#endif
     }
     else if (PMM_IS_FIRST(entry) == 1)
     {
         pmm_map_entry_set(index, PMM_FRAME_FREE);
+#ifdef DEBUG_PMM
         printk("[3] Liberando entry (0x%x) en el indice %d", entry, index);
         printk(", libre: %d KB\n", pmm_meminfo.free_mem / 1024);
         printk("Liberando entries... ");
+#endif
         index++;
         entry = pmm_map_entry_get(index);
         while (PMM_HAS_NEXT(entry) == 1 && PMM_IS_FIRST(entry) == 0)
         {
             pmm_map_entry_set(index, PMM_FRAME_FREE);
+#ifdef DEBUG_PMM
             printk("%d ", index);
+#endif
             index++;
             entry = pmm_map_entry_get(index);
         }
         pmm_map_entry_set(index, PMM_FRAME_FREE);
+#ifdef DEBUG_PMM
         printk("%d ", index);
         printk("\n Libre: %d KB\n", pmm_meminfo.free_mem / 1024);
+#endif
     }
     else if (PMM_IS_FIRST(entry) == 0 && PMM_HAS_NEXT(entry) == 1)
     {

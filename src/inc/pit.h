@@ -34,7 +34,17 @@
 #define PIT_BIN      0b00000000 /* 16-bit binary                    */
 #define PIT_BCD      0b00000001 /* 4-digit BCD                      */
 
-uint32_t pit_get_ticks(void);
+typedef struct
+{
+    uint32_t num_ints; /* Cantidad de interrupts generados por el PIT */
+    uint32_t ints_sec; /* Cantidad de interrupts por segundo          */
+} pit_info_t;
+
+
+
+
+uint32_t pit_get_num_ints(void); /* Devuelve num_ints */
+uint32_t pit_get_freq(void);     /* Devuelve ints_sec */
 
 void     pit_set_phase(uint16_t count);
 void     pit_install_handler(void);

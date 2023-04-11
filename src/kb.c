@@ -3,7 +3,7 @@
 #include "kb.h"
 #include "sys.h" /* regs_t              */
 #include "io.h"  /* inb outb            */
-#include "vga.h" /* pritnk              */
+#include "vga.h" /* printk              */
 #include "irq.h" /* irq_install_handler */
 
 #include "pit.h" /* pit_get_ticks       */
@@ -13,29 +13,47 @@
  * contador estático */
 void kb_handler(regs_t *r)
 {
-    static uint8_t  count = 0;
     static uint16_t div   = 0;
 
     uint32_t ticks;
     uint32_t uptime;
     uint8_t  scancode;
 
+    uint16_t count;
 
-    count++;
 
     scancode = inb(IO_KB_DAT);
 
-    if (count == 2) {
-        count  = 0;
-        ticks  = pit_get_ticks();
-        //ticks  = (uint32_t) pit_get_count();
+    if (scancode & KB_KEY_RELEASED)
+    {
+        /* Para comprobar shift, alt, ctrl, ... */
+    }
+    else
+    {
+        ticks  = pit_get_num_ints();
         uptime = sys_uptime();
-        printk("[Timer ticks: %d (%d s)]\n", ticks, uptime);
-        pit_set_phase(div);
-        div += 2000;
+
+        if (scancode == 0x18) /* tecla o */
+        {
+            div += 2000;
+            printk("[Timer ticks: %d (%d s) - 0x%x | ", ticks, uptime, scancode);
+            printk("%d]\n", div);
+            pit_set_phase(div);
+        }
+        else if (scancode == 0x19) /* tecla p */
+        {
+            div -= 2000;
+            printk("[Timer ticks: %d (%d s) - 0x%x | ", ticks, uptime, scancode);
+            printk("%d]\n", div);
+            pit_set_phase(div);
+        }
+        else if (scancode == 0x1A) /* La tecla de la dcha de la p: ^`[ */
+        {
+            count = pit_get_count();
+            printk("[PIT Counter: %d/%d\n", count, PIT_OSC_FQ / pit_get_freq());
+        }
     }
 
-    if (scancode) {}; /* Para que no se queje el compilador */
 
 }
 
