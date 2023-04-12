@@ -7,9 +7,6 @@
 
 typedef multiboot_memory_map_t multiboot_mmap_t; /* Ahorrar espacio */
 
-/* TODO: hacer macro para convertir de indice del mapa a dirección, y
- * viceversa */
-
 /* Definiciones estáticas */
 static pmm_info_t pmm_meminfo =
     {.installed_mem = 0,
