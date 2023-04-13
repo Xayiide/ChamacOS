@@ -59,6 +59,14 @@ void irq_init()
     idt_set(45, (uint32_t) irq13, GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
     idt_set(46, (uint32_t) irq14, GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
     idt_set(47, (uint32_t) irq15, GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
+
+    /*
+    for (int i = 32; i < 47; i++)
+    {
+        idt_set(i, (uint32_t) irq_vector[i],
+                GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
+    }
+    */
 }
 
 void irq_fault_handler(regs_t *r)

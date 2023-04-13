@@ -107,6 +107,14 @@ void isr_init()
     idt_set(29, (uint32_t) isr29, GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
     idt_set(30, (uint32_t) isr30, GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
     idt_set(31, (uint32_t) isr31, GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
+
+    /*
+    for (int i = 0; i < 31; i++)
+    {
+        idt_set(i, (uint32_t) isr_vector[i],
+                GDT_OFFSET_KERNEL_CODEm IDT_R0_32_INT);
+    }
+    */
 }
 
 void isr_fault_handler(regs_t *r)
