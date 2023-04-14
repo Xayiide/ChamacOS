@@ -3,6 +3,8 @@
 
 #include "sys.h" /* regs_t */
 
+#define ISR_NUM_EXC 32
+
 void isr_init();
 void isr_fault_handler(regs_t *r);
 
