@@ -45,7 +45,7 @@ char *isr_exception_name[] =
 void isr_init()
 {
     int i;
-    for (i = 0; i < ISR_NUM_EXC; i++)
+    for (i = 0; i < IDT_NUM_EXC; i++)
     {
         idt_set(i, (uint32_t) isr_vector[i],
                 GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
@@ -54,7 +54,7 @@ void isr_init()
 
 void isr_fault_handler(regs_t *r)
 {
-    if (r->int_no < ISR_NUM_EXC)
+    if (r->int_no < IDT_NUM_EXC)
     {
         vga_color(VGA_BACK_BLACK, VGA_FORE_RED);
         vga_puts(isr_exception_name[r->int_no]);

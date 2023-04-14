@@ -7,6 +7,7 @@
 #include "idt.h" /* idt_set   */
 #include "gdt.h" /* macros    */
 
+extern void *irq_vector[];
 
 extern void irq0();
 extern void irq1();
@@ -41,32 +42,14 @@ void irq_uninstall_handler(uint8_t irq)
 
 void irq_init()
 {
+    int i;
     pic_remap();
 
-    idt_set(32, (uint32_t) irq0,  GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
-    idt_set(33, (uint32_t) irq1,  GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
-    idt_set(34, (uint32_t) irq2,  GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
-    idt_set(35, (uint32_t) irq3,  GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
-    idt_set(36, (uint32_t) irq4,  GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
-    idt_set(37, (uint32_t) irq5,  GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
-    idt_set(38, (uint32_t) irq6,  GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
-    idt_set(39, (uint32_t) irq7,  GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
-    idt_set(40, (uint32_t) irq8,  GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
-    idt_set(41, (uint32_t) irq9,  GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
-    idt_set(42, (uint32_t) irq10, GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
-    idt_set(43, (uint32_t) irq11, GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
-    idt_set(44, (uint32_t) irq12, GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
-    idt_set(45, (uint32_t) irq13, GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
-    idt_set(46, (uint32_t) irq14, GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
-    idt_set(47, (uint32_t) irq15, GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
-
-    /*
-    for (int i = 32; i < 47; i++)
+    for (i = IDT_NUM_EXC; i < IDT_NUM_EXC + IRQ_NUM_INT; i++)
     {
-        idt_set(i, (uint32_t) irq_vector[i],
+        idt_set(i, (uint32_t) irq_vector[i - IDT_NUM_EXC],
                 GDT_OFFSET_KERNEL_CODE, IDT_R0_32_INT);
     }
-    */
 }
 
 void irq_fault_handler(regs_t *r)

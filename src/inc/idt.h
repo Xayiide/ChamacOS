@@ -3,6 +3,7 @@
 
 #include <stdint.h> /* uint_t */
 
+#define IDT_NUM_EXC         32
 #define IDT_MAX_DESCRIPTORS 256
 
 #define IDT_DESC_TASK    0x05
