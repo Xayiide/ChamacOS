@@ -12,6 +12,7 @@
 
 void kmain(multiboot_info_t *mbd, uint32_t magic)
 {
+    void *dir1, *dir2, *dir3;
 
     vga_init();
     vga_puts("Bienvenido a ChamacOS!\n");
@@ -37,6 +38,14 @@ void kmain(multiboot_info_t *mbd, uint32_t magic)
 
     kb_install_handler();
     printk("Teclado instalado\n");
+
+    dir1 = pmm_alloc_frame();
+    dir2 = pmm_alloc_frame();
+    dir3 = pmm_alloc_frames(2);
+
+    pmm_free_frame(dir1);
+    pmm_free_frame(dir2);
+    pmm_free_frame(dir3);
 
     for (;;);
 

@@ -180,8 +180,6 @@ void pmm_init(multiboot_info_t *mbd, uint32_t magic)
 
     printk("Memoria libre: %d KB\n", pmm_meminfo.free_mem / 1024);
 
-    //pmm_test();
-
 }
 
 /*
