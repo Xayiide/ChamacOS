@@ -10,12 +10,12 @@
 
 typedef struct 
 {
-    uint16_t limit_lo;
-    uint16_t base_lo;
-    uint8_t  base_mi;
-    uint8_t  access;
-    uint8_t  gran;  
-    uint8_t  base_hi;
+    uint16_t limit_lo; /* Seg Limit 15:0 */
+    uint16_t base_lo;  /* Base 15:0      */
+    uint8_t  base_mi;  /* Base 23:16     */
+    uint8_t  access;   /* Present, Desc Priv Lvl (2), Desc Type, Seg Type (4) */
+    uint8_t  gran;     /* Granu, Default opsize, L, Availbl , Seg Limit 19:16 */
+    uint8_t  base_hi;  /* Base 31:24     */
 } __attribute__((packed)) gdt_entry_t;
 
 typedef struct

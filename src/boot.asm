@@ -1,5 +1,7 @@
 [BITS 32]
 
+; GRUB nos coloca ya en modo protegido (Vol3: 10.9.1)
+
 global start
 start:
     mov esp, _sys_stack
@@ -36,9 +38,9 @@ stublet:
     jmp $
 
 
-; GDT
+; GDT - Vol3: 3.4.5
 global gdt_load
-extern gdtr         ; gdt.c
+extern gdtr         ; gdt.c - Vol3: 2.4.1
 gdt_load:
     lgdt[gdtr]      ; Carga el GDT con la variable gdtr de gdt.c
     mov ax, 0x10    ; 0x10 es el despl. de nuestro segmento de datos en el GDT
@@ -49,7 +51,7 @@ gdt_load:
     mov gs, ax
     mov ss, ax
     
-    jmp 0x08:flush2 ; 0x08 es el despl. del segmento de codigo
+    jmp 0x08:flush2 ; 0x08 es el despl. del segmento de codigo - far jump
 flush2:
     ret             ; Retorna al codigo de C
 
@@ -220,5 +222,5 @@ irq_vector:
 
 
 SECTION .bss
-    resb 8192 ; Reserva 8192 bytes de memoria
+    resb 8192 ; Reserva 8192 bytes de memoria como stack
 _sys_stack:

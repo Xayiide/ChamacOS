@@ -49,4 +49,3 @@ void gdt_init()
 
     gdt_load();
 }
-		
