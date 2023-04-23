@@ -3,7 +3,7 @@
 #include "pit.h"
 #include "io.h"     /* inb outb */
 #include "sys.h"    /* cli, sti            */
-#include "vga.h"    /* print               */
+#include "vga.h"    /* printk              */
 #include "irq.h"    /* irq_install_handler */
 
 static void pit_handler(regs_t *r);
@@ -69,4 +69,13 @@ uint16_t pit_get_count(void)
     ret |= inb(IO_PIT_CH0_DAT) << 8; /* Byte más sign   */
 
     return ret;
+}
+
+void pit_diag(void)
+{
+    vga_color(VGA_BACK_BLACK, VGA_FORE_RED);
+    printk(" === PIT DIAGNOSIS ===\n");
+    vga_color(VGA_BACK_BLACK, VGA_FORE_WHITE);
+    printk("  pit_handler: 0x%x\n", &pit_handler);
+    printk("  pit_info:    0x%x\n", &pit_info);
 }

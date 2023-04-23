@@ -53,17 +53,23 @@ static void pmm_fill_meminfo(multiboot_info_t *mbd) {
             pmm_meminfo.installed_mem += mmmt->len_lo;
         }
 
-        if (mmmt->type == MULTIBOOT_MEMORY_AVAILABLE &&
-            mmmt->addr_lo >= 0x00100000) /* punto de entrada */
+        if (mmmt->type == MULTIBOOT_MEMORY_AVAILABLE) /* punto de entrada */
         {
             vga_color(VGA_BACK_BLACK, VGA_FORE_CYAN);
             printk("Memoria usable: ");
-            printk("%d KBs a partir de la dir. 0x%x\n",
-                (PMM_FRAME_SIZE * PMM_NUM_FRAMES) / 1024, mmmt->addr_lo);
+            printk(" [0x%x -> 0x%x] (%d) KBs\n", mmmt->addr_lo,
+                    (mmmt->addr_lo + mmmt->len_lo), mmmt->len_lo/1024);
+            if (mmmt->addr_lo >= 0x00100000)
+            {
+                vga_color(VGA_BACK_BLACK, VGA_FORE_BROWN);
+                printk("\t [Utilizaremos %d KBs a partir de 0x%x]\n",
+                    (PMM_FRAME_SIZE * PMM_NUM_FRAMES) / 1024, mmmt->addr_lo);
+            }
 
-            vga_color(VGA_BACK_BLACK, VGA_FORE_WHITE);
         }
     }
+
+    vga_color(VGA_BACK_BLACK, VGA_FORE_WHITE);
 }
 
 static void pmm_printinfo(multiboot_info_t *mbd)
@@ -363,6 +369,13 @@ void pmm_free_frame(void *frame)
     }
 }
 
+void pmm_diag(void)
+{
+    vga_color(VGA_BACK_BLACK, VGA_FORE_RED);
+    printk(" === PMM DIAGNOSIS ===\n");
+    vga_color(VGA_BACK_BLACK, VGA_FORE_WHITE);
+    printk("  pmm_meminfo: 0x%x\n", &pmm_meminfo);
+}
 
 pmm_info_t *pmm_get_meminfo(void)
 {

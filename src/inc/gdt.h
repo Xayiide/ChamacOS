@@ -24,6 +24,7 @@ typedef struct
     uint32_t base;
 } __attribute__((packed)) gdtr_t;
 
-void gdt_init();
+void gdt_init(void);
+void gdt_diag(void);
 
 #endif

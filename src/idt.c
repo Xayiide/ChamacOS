@@ -1,5 +1,6 @@
 #include <stdint.h> /* uint_t */
 
+#include "vga.h" /* printk */
 #include "idt.h"
 #include "sys.h" /* memset */
 
@@ -20,7 +21,7 @@ void idt_set(uint8_t num, uint32_t base, uint16_t sel, uint8_t flags)
     idt[num].flags   = flags;
 }
 
-void idt_init()
+void idt_init(void)
 {
     /* Inicializa el IDT entero poniéndolo a 0 */
     memset(&idt, 0, sizeof(idt_entry_t) * IDT_MAX_DESCRIPTORS);
@@ -29,4 +30,13 @@ void idt_init()
     idtr.base  = (uint32_t) idt;
 
     idt_load();
+}
+
+void idt_diag(void)
+{
+    vga_color(VGA_BACK_BLACK, VGA_FORE_RED);
+    printk(" === IDT DIAGNOSIS ===\n");
+    vga_color(VGA_BACK_BLACK, VGA_FORE_WHITE);
+    printk("  idt:  0x%x\n", &idt);
+    printk("  idtr: 0x%x\n", &idtr);
 }

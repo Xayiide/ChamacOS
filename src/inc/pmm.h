@@ -71,6 +71,7 @@ void  pmm_init(multiboot_info_t *mbd, uint32_t magic);
 void *pmm_alloc_frame(void);
 void *pmm_alloc_frames(uint32_t n);
 void  pmm_free_frame(void *frame);
+void  pmm_diag(void);
 
 pmm_info_t *pmm_get_meminfo(void);
 

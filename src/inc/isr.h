@@ -3,7 +3,8 @@
 
 #include "sys.h" /* regs_t */
 
-void isr_init();
+void isr_init(void);
 void isr_fault_handler(regs_t *r);
+void isr_diag(void);
 
 #endif

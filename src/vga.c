@@ -10,7 +10,7 @@ static uint16_t  vga_x   = 0;
 static uint16_t  vga_y   = 0;
 static uint32_t  vga_col = VGA_BLACK_WHITE;
 
-void vga_init()
+void vga_init(void)
 {
     vga_mem = (uint16_t *) (VGA_ADDR);
     vga_clear();
@@ -39,7 +39,7 @@ void vga_putchar(uint8_t c)
     vga_move_csr();
 }
 
-void vga_clear()
+void vga_clear(void)
 {
     uint8_t x, y;
     uint16_t blank;
@@ -55,7 +55,7 @@ void vga_clear()
     vga_move_csr();
 }
 
-void vga_scroll()
+void vga_scroll(void)
 {
     uint16_t blank;
     uint16_t temp;
@@ -85,7 +85,7 @@ void vga_puts(const char *str)
 }
 
 /* http://www.brackeen.com/home/vga */
-void vga_move_csr()
+void vga_move_csr(void)
 {
     uint16_t temp;
 
@@ -101,6 +101,17 @@ void vga_move_csr()
 void vga_color(uint8_t back, uint8_t fore)
 {
     vga_col = (back << 4) | (fore & VGA_BLACK_WHITE);
+}
+
+void vga_diag(void)
+{
+    vga_color(VGA_BACK_BLACK, VGA_FORE_RED);
+    printk(" === VGA DIAGNOSIS ===\n");
+    vga_color(VGA_BACK_BLACK, VGA_FORE_WHITE);
+    printk("  vga_mem: 0x%x\n", &vga_mem);
+    printk("  vga_x:   0x%x\n", &vga_x);
+    printk("  vga_y:   0x%x\n", &vga_y);
+    printk("  vga_col: 0x%x\n", &vga_col);
 }
 
 /* TODO sacar a otro fichero (stdio.h) */
@@ -159,3 +170,4 @@ void printk(const char *format, ...)
     }
     va_end(arg);
 }
+

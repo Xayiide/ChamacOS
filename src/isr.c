@@ -42,7 +42,7 @@ char *isr_exception_name[] =
     "ISR 31: Reserved"
 };
 
-void isr_init()
+void isr_init(void)
 {
     int i;
     for (i = 0; i < IDT_NUM_EXC; i++)
@@ -57,9 +57,18 @@ void isr_fault_handler(regs_t *r)
     if (r->int_no < IDT_NUM_EXC)
     {
         vga_color(VGA_BACK_BLACK, VGA_FORE_RED);
-        vga_puts(isr_exception_name[r->int_no]);
+        vga_puts(isr_exception_name[r->int_no]); /* TODO: printk */
         vga_puts("\nParando el sistema!\n");
         vga_color(VGA_BACK_BLACK, VGA_FORE_WHITE);
         while (1);
     }
+}
+
+void isr_diag(void)
+{
+    vga_color(VGA_BACK_BLACK, VGA_FORE_RED);
+    printk(" === ISR DIAGNOSIS ===\n");
+    vga_color(VGA_BACK_BLACK, VGA_FORE_WHITE);
+    printk("  isr_vector:    0x%x\n", &isr_vector);
+    printk("  isr_exc_names: 0x%x\n", &isr_exception_name);
 }

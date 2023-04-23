@@ -1,7 +1,8 @@
 #include <stdint.h>
 
+#include "vga.h" /* printk */
 #include "gdt.h"
-#include "sys.h"
+//#include "sys.h"
 
 
 static gdt_entry_t gdt[3];
@@ -28,7 +29,7 @@ static void gdt_set(uint32_t num, uint32_t base, uint32_t limit,
     gdt[num].access   = access;
 }
 
-void gdt_init()
+void gdt_init(void)
 {
     gdtr.limit = (sizeof(gdt_entry_t) * 3) - 1;
     gdtr.base = (uint32_t) gdt;
@@ -48,4 +49,14 @@ void gdt_init()
     gdt_set(2, 0, 0xFFFFFFFF, 0x92, 0xCF);
 
     gdt_load();
+}
+
+void gdt_diag(void)
+{
+    vga_color(VGA_BACK_BLACK, VGA_FORE_RED);
+    printk(" === GDT DIAGNOSIS ===\n");
+    vga_color(VGA_BACK_BLACK, VGA_FORE_WHITE);
+    printk("  gdt:      0x%x\n", &gdt);
+    printk("  gdtr:     0x%x\n", &gdtr);
+    printk("  gdt_load: 0x%x\n", &gdt_load);
 }

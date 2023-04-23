@@ -49,6 +49,7 @@ uint32_t pit_get_freq(void);     /* Devuelve ints_sec */
 void     pit_set_phase(uint16_t count);
 void     pit_install_handler(void);
 uint16_t pit_get_count(void);
+void     pit_diag(void);
 
 
 #endif

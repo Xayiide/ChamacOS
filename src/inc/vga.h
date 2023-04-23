@@ -23,13 +23,14 @@
 //#define VGA_IO_CTRL 0x3D4
 //#define VGA_IO_DATA 0x3D5
 
-void vga_init();
+void vga_init(void);
 void vga_putchar(uint8_t c); /* static? */
-void vga_clear();
-void vga_scroll();
+void vga_clear(void);
+void vga_scroll(void);
 void vga_puts(const char *str);
 void vga_move_csr();
 void vga_color(uint8_t back, uint8_t fore);
+void vga_diag(void);
 
 void printk(const char *format, ...);
 
