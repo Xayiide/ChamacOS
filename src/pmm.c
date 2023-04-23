@@ -132,7 +132,9 @@ static void pmm_test(void)
     void *frame1;
     void *frame2;
 
+    vga_color(VGA_BACK_BLACK, VGA_FORE_RED);
     printk(" ===== MEMORY TEST =====\n");
+    vga_color(VGA_BACK_BLACK, VGA_FORE_WHITE);
 
     for (i = 0; i < 99; i++)
     {
@@ -183,6 +185,10 @@ void pmm_init(multiboot_info_t *mbd, uint32_t magic)
 
     /* Marca la primera frame como no disponible (es donde está la tabla) */
     pmm_map_entry_set(0, PMM_FRAME_USED);
+
+#ifdef DEBUG_PMM
+    pmm_test();
+#endif
 
     printk("Memoria libre: %d KB\n", pmm_meminfo.free_mem / 1024);
 

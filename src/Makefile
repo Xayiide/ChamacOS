@@ -27,22 +27,24 @@ QOPT = -gdb tcp::26000 -S
 FILES = boot.o sys.o vga.o gdt.o idt.o isr.o pic.o irq.o pit.o io.o kb.o \
 		pmm.o kernel.o
 
+# NOTE: UFLAG se usa al llamar al comando make desde fuera:
+# make fqemu UFLAG="DEBUG" por ejemplo
 all: 
 	nasm -f elf boot.asm -o boot.o
-	$(CC) $(CFLAG) $(IFLAG) -c sys.c    -o sys.o
-	$(CC) $(CFLAG) $(IFLAG) -c vga.c    -o vga.o
-	$(CC) $(CFLAG) $(IFLAG) -c gdt.c    -o gdt.o
-	$(CC) $(CFLAG) $(IFLAG) -c idt.c    -o idt.o
-	$(CC) $(CFLAG) $(IFLAG) -c isr.c    -o isr.o
-	$(CC) $(CFLAG) $(IFLAG) -c pic.c    -o pic.o
-	$(CC) $(CFLAG) $(IFLAG) -c irq.c    -o irq.o
-	$(CC) $(CFLAG) $(IFLAG) -c pit.c    -o pit.o
-	$(CC) $(CFLAG) $(IFLAG) -c io.c     -o io.o
-	$(CC) $(CFLAG) $(IFLAG) -c kb.c     -o kb.o
-	$(CC) $(CFLAG) $(IFLAG) -c pmm.c    -o pmm.o
-	$(CC) $(CFLAG) $(IFLAG) -c kernel.c -o kernel.o
+	$(CC) $(UFLAG) $(CFLAG) $(IFLAG) -c sys.c    -o sys.o
+	$(CC) $(UFLAG) $(CFLAG) $(IFLAG) -c vga.c    -o vga.o
+	$(CC) $(UFLAG) $(CFLAG) $(IFLAG) -c gdt.c    -o gdt.o
+	$(CC) $(UFLAG) $(CFLAG) $(IFLAG) -c idt.c    -o idt.o
+	$(CC) $(UFLAG) $(CFLAG) $(IFLAG) -c isr.c    -o isr.o
+	$(CC) $(UFLAG) $(CFLAG) $(IFLAG) -c pic.c    -o pic.o
+	$(CC) $(UFLAG) $(CFLAG) $(IFLAG) -c irq.c    -o irq.o
+	$(CC) $(UFLAG) $(CFLAG) $(IFLAG) -c pit.c    -o pit.o
+	$(CC) $(UFLAG) $(CFLAG) $(IFLAG) -c io.c     -o io.o
+	$(CC) $(UFLAG) $(CFLAG) $(IFLAG) -c kb.c     -o kb.o
+	$(CC) $(UFLAG) $(CFLAG) $(IFLAG) -c pmm.c    -o pmm.o
+	$(CC) $(UFLAG) $(CFLAG) $(IFLAG) -c kernel.c -o kernel.o
 	$(LD) -g -relocatable $(FILES) -o kernelfull.o # nuevo
-	$(CC) $(CFLAG) -T linker.ld kernelfull.o -o kernel.bin
+	$(CC) $(UFLAG) $(CFLAG) -T linker.ld kernelfull.o -o kernel.bin
 #$(LD) -T linker.ld $(FILES) -o kernel.bin
 
 clean:

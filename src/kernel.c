@@ -37,12 +37,14 @@ void kmain(multiboot_info_t *mbd, uint32_t magic)
     kb_install_handler();
     printk("Teclado instalado\n");
 
+#ifdef DIAG
     vga_diag();
     gdt_diag();
     idt_diag();
     isr_diag();
     pmm_diag();
     pit_diag();
+#endif
 
 
     for (;;);
