@@ -104,6 +104,8 @@ char *changebase(uint32_t num, base_t base)
 
 volatile void panic(const char *str)
 {
+    vga_color(VGA_BACK_BLACK, VGA_FORE_RED);
     printk("Kernel panic: %s\n", str);
+    vga_color(VGA_BACK_BLACK, VGA_FORE_WHITE);
     for (;;);
 }
