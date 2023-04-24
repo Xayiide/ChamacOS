@@ -20,12 +20,11 @@ static void    pmm_fill_meminfo(multiboot_info_t *mbd);
 static void    pmm_printinfo(void);
 
 static void    pmm_map_init(multiboot_info_t *mbd);
-static void    pmm_frame_free(void *frame);
-static void    pmm_frames_free(void *frame, size_t num);
-static void    pmm_frame_used(void *frame);
-static void    pmm_frames_used(void *frame, size_t num);
-static void    pmm_map_entry_set(uint32_t index, pmm_frame_status_t status);
-static uint8_t pmm_map_entry_get(uint32_t index, pmm_frame_status_t status);
+static void    pmm_set_frame(void *frame, frame_status_t s);
+static void    pmm_set_frames(void *frame, size_t num, frame_status_t s);
+
+static void    pmm_map_entry_set(uint32_t index, frame_status_t s);
+static uint8_t pmm_map_entry_get(uint32_t index, frame_status_t s);
 
 static void    pmm_test(void);
 
@@ -35,10 +34,6 @@ void pmm_init(multiboot_info_t *mbd, uint32_t magic)
 
     pmm_fill_meminfo(mbd);
 
-    /* Ponemos a unos el mapa de memoria. Esto nos conviene para luego marcar
-     * como disponibles sólo los rangos que nos interesan (y conocemos bien).
-     * El resto mejor que queden como inusables, a riesgo de romper algo.  */
-    memset(meminfo.pmm_map, 0xFF, meminfo.pmm_map_size);
 
     pmm_map_init(mbd);
 }
@@ -93,7 +88,7 @@ static void pmm_printinfo(void)
 {
     printk("Memoria instalada: %d bytes\n", meminfo.installed_mem);
     printk("Numero de frames:  %d\n", meminfo.num_frames);
-    printk("Tamanio del mapa:  %d bits ", meminfo.pmm_map_size);
+    printk("Tamanio del mapa:  %d bytes ", meminfo.pmm_map_size);
     printk("en la dir 0x%x\n", meminfo.pmm_map);
 }
 
@@ -102,6 +97,11 @@ static void pmm_map_init(multiboot_info_t *mbd)
     uint32_t i;
     multiboot_memory_map_t *mmmt;
 
+    /* Ponemos a unos el mapa de memoria. Esto nos conviene para luego marcar
+     * como disponibles sólo los rangos que nos interesan (y conocemos bien).
+     * El resto mejor que queden como inusables, a riesgo de romper algo.  */
+    memset(meminfo.pmm_map, 0xFF, meminfo.pmm_map_size);
+
     /* Iteramos sobre todas las secciones. Si están disponibles para su uso,
      * las marcamos como libres. El resto fueron marcadas como usadas. */
     for (i = 0; i < mbd->mmap_length; i += sizeof(multiboot_memory_map_t))
@@ -109,13 +109,25 @@ static void pmm_map_init(multiboot_info_t *mbd)
         mmmt = (multiboot_memory_map_t *) (mbd->mmap_addr + i);
         if (mmmt->type == MULTIBOOT_MEMORY_AVAILABLE)
         {
-            pmm_frames_free((void *) mmmt->addr_lo,
-                    mmmt->len_lo / PMM_FRAME_SIZE);
+            pmm_set_frames((void *) mmmt->addr_lo,
+                           mmmt->len_lo / PMM_FRAME_SIZE,
+                           FRAME_FREE);
         }
     }
+
+    /* Marcamos el primer MB de memoria como usado (boot, memoria VGA, el
+     * mismo mapa de memoria (0x90000), etc. */
+    pmm_set_frames((void *) 0x0, 0x00100000 / PMM_FRAME_SIZE, FRAME_USED);
+
+    /* Marcamos el frame correspondiente al mapa de memoria (0x90000) como
+     * usado. Esto no sería necesario porque lo acabamos de hacer, pero en
+     * caso de que cambiemos la dirección del mapa pues viene bien */
+    pmm_set_frames(meminfo.pmm_map, meminfo.pmm_map_size / PMM_FRAME_SIZE,
+                   FRAME_USED);
+
 }
 
-static void pmm_frame_free(void *frame)
+static void pmm_set_frame(void *frame, frame_status_t s)
 {
     uint32_t addr;
     uint32_t indx;
@@ -123,36 +135,59 @@ static void pmm_frame_free(void *frame)
     addr = (uint32_t) frame;
 
     if (addr > meminfo.installed_mem)
-        panic("pmm_free_frame: frame out of bounds");
+        panic("pmm_set_frame: frame out of bounds");
 
     indx = addr / PMM_FRAME_SIZE;
-    pmm_map_entry_set(indx, FRAME_FREE);
-
-    meminfo.free_mem += PMM_FRAME_SIZE;
+    pmm_map_entry_set(indx, s);
+    if (s == FRAME_FREE)
+        meminfo.free_mem += PMM_FRAME_SIZE;
+    else if (s == FRAME_USED)
+        meminfo.free_mem -= PMM_FRAME_SIZE;
 }
 
-static void pmm_frames_free(void *frame, size_t num)
+static void pmm_set_frames(void *frame, size_t num, frame_status_t s)
 {
     uint32_t i;
+
     for (i = 0; i < num; i++)
-        pmm_frame_free(frame + (i * PMM_FRAME_SIZE));
+        pmm_set_frame(frame + (i * PMM_FRAME_SIZE), s);
+
 }
 
-static void pmm_frame_used(void *frame)
+
+static void pmm_map_entry_set(uint32_t index, frame_status_t s)
 {
+    uint8_t  bit;
+    uint32_t slot;
+
+    if (index > meminfo.num_frames)
+        panic("pmm_map_entry_set: index out of range");
+
+    bit  = index % 8;
+    /* index - bit: para redondear y que la div entera sea correcta */
+    slot = (index - bit) / 8;
+    meminfo.pmm_map[slot] |= (s << bit);
+
     return;
 }
 
-static void pmm_frames_used(void *frame, size_t num)
+static uint8_t pmm_map_entry_get(uint32_t index, frame_status_t status)
 {
-    return;
+    uint8_t  bit;
+    uint32_t slot;
+    uint8_t  val;
+    uint8_t  ret = 0;
+
+    if (index > meminfo.num_frames)
+        panic("pmm_map_entry_get: index out of range");
+
+    bit  = index % 8;
+    /* index - bit: para redondear y que la div entera sea correcta */
+    slot = (index - bit) / 8;
+    val  = meminfo.pmm_map[slot];
+
+    ret = val & (0b10000000 >> bit);
+
+    return ret;
 }
-
-
-
-static void pmm_map_entry_set(uint32_t index, pmm_frame_status_t status)
-{
-    return;
-}
-//static uint8_t pmm_map_entry_get(uint32_t index, pmm_frame_status_t status);
 //static void    pmm_test(void);

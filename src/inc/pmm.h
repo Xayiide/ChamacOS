@@ -17,9 +17,9 @@ typedef enum
 {
     FRAME_FREE = 0x00,
     FRAME_USED = 0x01
-} pmm_frame_status_t;
+} frame_status_t;
 
-#define PMM_BASE_ADDR  0x00100000 /* FIXME: Sustituimos el kernel */
+#define PMM_BASE_ADDR  0x00090000 /* FIXME: Sustituimos el kernel */
 #define PMM_FRAME_SIZE 0x1000 /* 4096 */
 
 void pmm_init(multiboot_info_t *mbd, uint32_t magic);
