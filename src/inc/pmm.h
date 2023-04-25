@@ -11,6 +11,7 @@ typedef struct
     uint8_t  *pmm_map;
     uint32_t pmm_map_size;
     uint32_t num_frames;
+    uint32_t first_free;
 } pmm_info_t;
 
 typedef enum
@@ -22,9 +23,11 @@ typedef enum
 #define PMM_BASE_ADDR  0x00090000 /* FIXME: Sustituimos el kernel */
 #define PMM_FRAME_SIZE 0x1000 /* 4096 */
 
+#define PMM_INDX2ADDR(indx) (void *) (PMM_BASE_ADDR + (indx * PMM_FRAME_SIZE))
+#define PMM_ADDR2INDX(addr) (uint32_t) (addr - PMM_BASE_ADDR) / PMM_FRAME_SIZE
+
 void pmm_init(multiboot_info_t *mbd, uint32_t magic);
 void *pmm_alloc_frame(void);
-void *pmm_alloc_frames(uint32_t n);
 void pmm_free_frame(void *frame);
 void pmm_diag(void);
 
