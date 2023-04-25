@@ -44,11 +44,9 @@ void pmm_init(multiboot_info_t *mbd, uint32_t magic)
     pmm_map_init(mbd);
 
     pmm_set_first();
-    pmm_print_map();
 
 #ifdef DEBUG_PMM
     pmm_test();
-    pmm_print_map();
 #endif
 }
 
@@ -188,15 +186,17 @@ static void pmm_map_init(multiboot_info_t *mbd)
 
 static void pmm_set_first(void)
 {
-    uint32_t i;
+    uint32_t i, found = 0;
     for (i = 0; i < meminfo.num_frames; i++)
     {
         if (pmm_map_entry_get(i) == FRAME_FREE) {
             meminfo.first_free = i;
+            found = 1;
             break;
         }
     }
-    meminfo.first_free = 0;
+    if (found == 0)
+        meminfo.first_free = 0;
 }
 
 static void pmm_set_frame(void *frame, frame_status_t s)
@@ -281,7 +281,7 @@ static void pmm_test(void)
 static void pmm_print_map(void)
 {
     uint32_t i;
-    for (i = 0; i < 600/*meminfo.pmm_map_size*/; i++)
+    for (i = 0; i < meminfo.pmm_map_size; i++)
     {
         if (i % 32 == 0) {
             printk("\n");
