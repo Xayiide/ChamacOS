@@ -148,7 +148,7 @@ static void pmm_printinfo(void)
     printk("Tamanio del mapa:  %d bytes ", meminfo.pmm_map_size);
     printk("en la dir 0x%x [indice %d]\n", meminfo.pmm_map,
             PMM_ADDR2INDX(meminfo.pmm_map));
-    printk("1er marco libre:   0x%x [0x%x]\n", meminfo.first_free,
+    printk("1er marco libre:   %d [0x%x]\n", meminfo.first_free,
             PMM_INDX2ADDR(meminfo.first_free));
     vga_color(VGA_BACK_BLACK, VGA_FORE_WHITE);
 }
@@ -187,8 +187,11 @@ static void pmm_map_init(multiboot_info_t *mbd)
                    FRAME_USED);
 
     /* Marcar como usadas las páginas correspondientes al stack del kernel,
-     * definido en boot.asm
-     */
+     * definido en boot.asm (de 0x00104000 a 0x00106000. También marcamos lo
+     * anterior (desde 0x00100000) como usado porque entiendo que ahí hay
+     * código y cosas. */
+    pmm_set_frames((void *) 0x00100000, 0x00106000 / PMM_FRAME_SIZE,
+                   FRAME_USED);
 }
 
 static void pmm_set_first(void)
