@@ -28,7 +28,7 @@ FILES = boot.o sys.o vga.o gdt.o idt.o isr.o pic.o irq.o pit.o io.o kb.o \
 		pmm.o kernel.o
 
 # NOTE: UFLAG se usa al llamar al comando make desde fuera:
-# make fqemu UFLAG="DEBUG" por ejemplo
+# make fqemu UFLAG="-DDIAG" por ejemplo
 all: 
 	nasm -f elf boot.asm -o boot.o
 	$(CC) $(UFLAG) $(CFLAG) $(IFLAG) -c sys.c    -o sys.o
