@@ -10,10 +10,17 @@
 #include "pmm.h"       /* pmm_init            */
 #include "multiboot.h"
 
+extern uint32_t start;
+extern uint32_t kstack_start, kstack_end;
+
 void kmain(multiboot_info_t *mbd, uint32_t magic)
 {
     vga_init();
-    vga_puts("Bienvenido a ChamacOS!\n");
+    printk("Bienvenido a ChamacOS!\n");
+    printk("\t[kmain:        0x%x]\n", kmain);
+    printk("\t[start:        0x%x]\n", &start);
+    printk("\t[kstack_start: 0x%x]\n", &kstack_start);
+    printk("\t[kstack_end:   0x%x]\n", &kstack_end);
 
     gdt_init();
     vga_puts("GDT inicializado\n");

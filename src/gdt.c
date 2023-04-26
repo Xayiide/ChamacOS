@@ -58,5 +58,5 @@ void gdt_diag(void)
     vga_color(VGA_BACK_BLACK, VGA_FORE_WHITE);
     printk("  gdt:      0x%x\n", &gdt);
     printk("  gdtr:     0x%x\n", &gdtr);
-    printk("  gdt_load: 0x%x\n", &gdt_load);
+    printk("  gdt_load: 0x%x\n", gdt_load);
 }

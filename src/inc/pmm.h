@@ -20,11 +20,11 @@ typedef enum
     FRAME_USED = 0x01
 } frame_status_t;
 
-#define PMM_BASE_ADDR  0x00090000 /* FIXME: Sustituimos el kernel */
+#define PMM_BASE_ADDR  0x00090000
 #define PMM_FRAME_SIZE 0x1000 /* 4096 */
 
-#define PMM_INDX2ADDR(indx) (void *) (PMM_BASE_ADDR + (indx * PMM_FRAME_SIZE))
-#define PMM_ADDR2INDX(addr) (uint32_t) (addr - PMM_BASE_ADDR) / PMM_FRAME_SIZE
+#define PMM_INDX2ADDR(indx) (void *) (indx * PMM_FRAME_SIZE)
+#define PMM_ADDR2INDX(addr) (uint32_t) ((uint32_t) addr / PMM_FRAME_SIZE)
 
 void pmm_init(multiboot_info_t *mbd, uint32_t magic);
 void *pmm_alloc_frame(void);

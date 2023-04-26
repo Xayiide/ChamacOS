@@ -38,11 +38,9 @@ static void    pmm_print_map(void);
 void pmm_init(multiboot_info_t *mbd, uint32_t magic)
 {
     pmm_check_magic(mbd, magic);
-
     pmm_fill_meminfo(mbd);
-
     pmm_map_init(mbd);
-
+    pmm_printinfo();
     pmm_set_first();
 
 #ifdef DEBUG_PMM
@@ -88,7 +86,8 @@ void pmm_diag(void)
     printk("  dir. del mapa:    0x%x\n", meminfo.pmm_map);
     printk("  tam. del mapa:    %d bytes\n", meminfo.pmm_map_size);
     printk("  numero de frames: %d\n", meminfo.num_frames);
-    printk("  1er ind. libre:   %d\n", meminfo.first_free);
+    printk("  1er ind. libre:   %d [0x%x]\n", meminfo.first_free,
+            PMM_INDX2ADDR(meminfo.first_free));
     printk("  Dir. meminfo:     0x%x\n", &meminfo);
 }
 
@@ -138,16 +137,20 @@ static void pmm_fill_meminfo(multiboot_info_t *mbd)
     meminfo.num_frames   = meminfo.installed_mem / PMM_FRAME_SIZE;
     meminfo.pmm_map_size = meminfo.num_frames / 8;
 
-    pmm_printinfo();
     vga_color(VGA_BACK_BLACK, VGA_FORE_WHITE);
 }
 
 static void pmm_printinfo(void)
 {
+    vga_color(VGA_BACK_BLACK, VGA_FORE_CYAN);
     printk("Memoria instalada: %d bytes\n", meminfo.installed_mem);
     printk("Numero de frames:  %d\n", meminfo.num_frames);
     printk("Tamanio del mapa:  %d bytes ", meminfo.pmm_map_size);
-    printk("en la dir 0x%x\n", meminfo.pmm_map);
+    printk("en la dir 0x%x [indice %d]\n", meminfo.pmm_map,
+            PMM_ADDR2INDX(meminfo.pmm_map));
+    printk("1er marco libre:   0x%x [0x%x]\n", meminfo.first_free,
+            PMM_INDX2ADDR(meminfo.first_free));
+    vga_color(VGA_BACK_BLACK, VGA_FORE_WHITE);
 }
 
 static void pmm_map_init(multiboot_info_t *mbd)
@@ -182,6 +185,10 @@ static void pmm_map_init(multiboot_info_t *mbd)
      * caso de que cambiemos la dirección del mapa pues viene bien */
     pmm_set_frames(meminfo.pmm_map, meminfo.pmm_map_size / PMM_FRAME_SIZE,
                    FRAME_USED);
+
+    /* Marcar como usadas las páginas correspondientes al stack del kernel,
+     * definido en boot.asm
+     */
 }
 
 static void pmm_set_first(void)

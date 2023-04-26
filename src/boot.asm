@@ -2,9 +2,11 @@
 
 ; GRUB nos coloca ya en modo protegido (Vol3: 10.9.1)
 
-global start
+global start        ; Necesario en linker.ld
+global kstack_end   ; Para kernel.c
+global kstack_start ; Para kernel.c
 start:
-    mov esp, _sys_stack
+    mov esp, kstack_end ; Pon un stack
     jmp stublet
 
 ALIGN 4
@@ -222,5 +224,6 @@ irq_vector:
 
 
 SECTION .bss
-    resb 8192 ; Reserva 8192 bytes de memoria como stack
-_sys_stack:
+kstack_start:
+    resb 8192 ; Reserva 8192 bytes de memoria como stack para el kernel
+kstack_end:
