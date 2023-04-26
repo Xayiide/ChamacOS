@@ -17,7 +17,7 @@ CFLAG = -g -ffreestanding -falign-jumps -falign-functions -falign-labels      \
 
 IFLAG = -I./inc
 
-LFLAG = -T
+LFLAG = -Wl,--verbose
 
 QEMU = qemu-system-i386 -kernel
 QOPT = -gdb tcp::26000 -S
