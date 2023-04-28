@@ -10,17 +10,20 @@
 #include "pmm.h"       /* pmm_init            */
 #include "multiboot.h"
 
-extern uint32_t start;
-extern uint32_t kstack_start, kstack_end;
+extern uint32_t start;                    /* boot.asm */
+extern uint32_t kstack_start, kstack_end; /* "        */
+
+extern char     _kernel_start, _kernel_end; /* linker.ld */
+extern char     _text_start, _text_end;     /* "         */
+extern char     _bss_start, _bss_end;       /* "         */
+
+static void k_diag(void);
 
 void kmain(multiboot_info_t *mbd, uint32_t magic)
 {
     vga_init();
     printk("Bienvenido a ChamacOS!\n");
-    printk("\t[kmain:        0x%x]\n", kmain);
-    printk("\t[start:        0x%x]\n", &start);
-    printk("\t[kstack_start: 0x%x]\n", &kstack_start);
-    printk("\t[kstack_end:   0x%x]\n", &kstack_end);
+    k_diag();
 
     gdt_init();
     vga_puts("GDT inicializado\n");
@@ -56,4 +59,16 @@ void kmain(multiboot_info_t *mbd, uint32_t magic)
 
     for (;;);
 
+}
+
+void k_diag(void)
+{
+    printk("\tstart:  [0x%x]\n", &start);
+    printk("\tKernel: [0x%x -> 0x%x]\n", &_kernel_start, &_kernel_end);
+    printk("\tText:   [0x%x -> 0x%x]\n", &_text_start, &_text_end);
+    printk("\tBSS:    [0x%x -> 0x%x]\n", &_bss_start, &_bss_end);
+    printk("\tKstack: [0x%x <- 0x%x]\n", &kstack_end, &kstack_start);
+    printk("\tkmain:  [0x%x]\n", kmain);
+
+    printk(" === === \n");
 }

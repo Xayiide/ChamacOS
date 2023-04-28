@@ -6,7 +6,7 @@ global start        ; Necesario en linker.ld
 global kstack_end   ; Para kernel.c
 global kstack_start ; Para kernel.c
 start:
-    mov esp, kstack_end ; Pon un stack
+    mov esp, kstack_start ; Pon un stack
     jmp stublet
 
 ALIGN 4
@@ -224,6 +224,6 @@ irq_vector:
 
 
 SECTION .bss
-kstack_start:
-    resb 8192 ; Reserva 8192 bytes de memoria como stack para el kernel
 kstack_end:
+    resb 8192 ; Reserva 8192 bytes de memoria como stack para el kernel
+kstack_start:

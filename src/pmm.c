@@ -32,7 +32,7 @@ static void    pmm_test(void);
 static void    pmm_print_map(void);
 
 
-
+extern char _kernel_start, _kernel_end; /* linker.ld */
 
 
 void pmm_init(multiboot_info_t *mbd, uint32_t magic)
@@ -178,7 +178,8 @@ static void pmm_map_init(multiboot_info_t *mbd)
 
     /* Marcamos el primer MB de memoria como usado (boot, memoria VGA, el
      * mismo mapa de memoria (0x90000), etc. */
-    pmm_set_frames((void *) 0x0, 0x00100000 / PMM_FRAME_SIZE, FRAME_USED);
+    pmm_set_frames((void *) 0x0, (uint32_t) &_kernel_start / PMM_FRAME_SIZE,
+                   FRAME_USED);
 
     /* Marcamos el frame correspondiente al mapa de memoria (0x90000) como
      * usado. Esto no sería necesario porque lo acabamos de hacer, pero en
@@ -186,11 +187,10 @@ static void pmm_map_init(multiboot_info_t *mbd)
     pmm_set_frames(meminfo.pmm_map, meminfo.pmm_map_size / PMM_FRAME_SIZE,
                    FRAME_USED);
 
-    /* Marcar como usadas las páginas correspondientes al stack del kernel,
-     * definido en boot.asm (de 0x00104000 a 0x00106000. También marcamos lo
-     * anterior (desde 0x00100000) como usado porque entiendo que ahí hay
-     * código y cosas. */
-    pmm_set_frames((void *) 0x00100000, 0x00106000 / PMM_FRAME_SIZE,
+    /* Marcar como usadas los marcos correspondientes al código, stack y datos
+     * del kernel. Esta información nos la da el linker script. */
+    pmm_set_frames((void *) &_kernel_start,
+                   (&_kernel_end - &_kernel_start) / PMM_FRAME_SIZE,
                    FRAME_USED);
 }
 
