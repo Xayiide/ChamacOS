@@ -102,7 +102,7 @@ char *changebase(uint32_t num, base_t base)
     return ptr;
 }
 
-volatile void panic(const char *str)
+__attribute__((noreturn)) void panic(const char *str)
 {
     vga_color(VGA_BACK_BLACK, VGA_FORE_RED);
     printk("Kernel panic: %s\n", str);

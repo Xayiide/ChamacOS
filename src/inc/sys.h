@@ -39,6 +39,6 @@ void    cli(); /* desactivar */
 /* misceláneo */
 char *changebase(uint32_t num, base_t base);
 
-volatile void panic(const char *str);
+__attribute__((noreturn)) void panic(const char *str);
 
 #endif

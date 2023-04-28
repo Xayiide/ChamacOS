@@ -76,8 +76,7 @@ void vga_scroll(void)
 
 void vga_puts(const char *str)
 {
-    int    i;
-    size_t len;
+    size_t i, len; /* mismo tipo (signo) para que no se queje el compilador */
 
     len = strlen(str);
     for (i = 0; i < len; i++)
