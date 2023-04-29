@@ -2,13 +2,12 @@
 
 #include "vga.h" /* printk */
 #include "gdt.h"
-//#include "sys.h"
 
 
 static gdt_entry_t gdt[3];
 gdtr_t             gdtr; /* se usa en boot.asm */
 
-extern void gdt_load(); /* boot.asm */
+extern void gdt_load(void); /* boot.asm */
 
 
 static void gdt_set(uint32_t num, uint32_t base, uint32_t limit,
@@ -43,10 +42,18 @@ void gdt_init(void)
      * Granul  : 4 KBytes
      * opcodes : 32-bit
      * tipo    : código */
-    gdt_set(1, 0, 0xFFFFFFFF, 0x9A, 0xCF);
+    gdt_set(1, 0, 0xFFFFFFFF, 0x9A, 0xCF); /* TODO Cambiar 9A y CF a macros */
 
     /* Segmento de datos. Igual pero tipo = datos */
     gdt_set(2, 0, 0xFFFFFFFF, 0x92, 0xCF);
+
+    /* Segmento de código de usuario */
+    gdt_set(3, 0, 0xFFFFFFFF, 0xFA, 0xCF);
+    /* Segmento de datos de usuario */
+    gdt_set(4, 0, 0xFFFFFFFF, 0xF2, 0xCF);
+
+    /* Segmento de TSS */
+    /* gdt_set(5, &tss_entry, &tss_entry + sizeof(tss_entry), 0x89, 0x0); */
 
     gdt_load();
 }

@@ -28,6 +28,9 @@ void kmain(multiboot_info_t *mbd, uint32_t magic)
     gdt_init();
     vga_puts("GDT inicializado\n");
 
+    //tss_init(3);
+    //printk("TSS inicializado (pos %d)\n", 3);
+
     idt_init();
     vga_puts("IDT inicializado\n");
 
