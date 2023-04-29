@@ -8,7 +8,7 @@ static idt_entry_t idt[IDT_MAX_DESCRIPTORS];
 idtr_t             idtr;
 
 
-extern void idt_load(); /* boot.asm */
+extern void idt_load(void); /* boot.asm */
 
 
 void idt_set(uint8_t num, uint32_t base, uint16_t sel, uint8_t flags)

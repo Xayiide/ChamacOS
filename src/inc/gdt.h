@@ -1,6 +1,8 @@
 #ifndef _GDT_H_
 #define _GDT_H
 
+/* Intel x86 SDM Vol3: 3.4.5 */
+
 #include <stdint.h> /* uint_t */
 
 /* Importante: si se cambian estas macros se tienen que cambiar también en
