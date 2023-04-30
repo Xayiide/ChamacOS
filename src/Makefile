@@ -25,7 +25,7 @@ QOPT = -gdb tcp::26000 -S
 .PHONY: all clean re qemu fqemu
 
 FILES = boot.o sys.o vga.o gdt.o idt.o isr.o pic.o irq.o pit.o io.o kb.o \
-		pmm.o tss.o kernel.o
+		pmm.o kernel.o
 
 # NOTE: UFLAG se usa al llamar al comando make desde fuera:
 # make fqemu UFLAG="-DDIAG" por ejemplo
@@ -42,7 +42,6 @@ all:
 	$(CC) $(UFLAG) $(CFLAG) $(IFLAG) -c io.c     -o io.o
 	$(CC) $(UFLAG) $(CFLAG) $(IFLAG) -c kb.c     -o kb.o
 	$(CC) $(UFLAG) $(CFLAG) $(IFLAG) -c pmm.c    -o pmm.o
-	$(CC) $(UFLAG) $(CFLAG) $(IFLAG) -c tss.c    -o tss.o
 	$(CC) $(UFLAG) $(CFLAG) $(IFLAG) -c kernel.c -o kernel.o
 	$(LD) -g -relocatable $(FILES) -o kernelfull.o # nuevo
 	$(CC) $(UFLAG) $(CFLAG) -T linker.ld kernelfull.o -o kernel.bin
