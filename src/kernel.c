@@ -8,6 +8,7 @@
 #include "kb.h"        /* kb_install_handler  */
 #include "sys.h"       /* sti                 */
 #include "pmm.h"       /* pmm_init            */
+#include "task.h"      /* task_init           */
 #include "multiboot.h"
 
 extern uint32_t start;                    /* boot.asm */
