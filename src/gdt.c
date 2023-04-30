@@ -4,7 +4,7 @@
 #include "gdt.h"
 
 
-static gdt_entry_t gdt[3];
+static gdt_entry_t gdt[GDT_NUM_DESC];
 gdtr_t             gdtr; /* se usa en boot.asm */
 
 extern void gdt_load(void); /* boot.asm */
@@ -36,21 +36,16 @@ void gdt_init(void)
     /* Descriptor nulo */
     gdt_set(0, 0, 0, 0, 0);
 
-    /* Segmento de código.
-     * Dir base: 0
-     * Límite  : 4 GBytes
-     * Granul  : 4 KBytes
-     * opcodes : 32-bit
-     * tipo    : código */
-    gdt_set(1, 0, 0xFFFFFFFF, 0x9A, 0xCF); /* TODO Cambiar 9A y CF a macros */
+    /* Segmento de código de kernel */
+    gdt_set(1, 0, 0xFFFFFFFF, GDT_R0_CODE_XR, GDT_GRAN_DEFAULT);
 
-    /* Segmento de datos. Igual pero tipo = datos */
-    gdt_set(2, 0, 0xFFFFFFFF, 0x92, 0xCF);
+    /* Segmento de datos de kernel. Igual pero tipo = datos */
+    gdt_set(2, 0, 0xFFFFFFFF, GDT_R0_DATA_RW, GDT_GRAN_DEFAULT);
 
     /* Segmento de código de usuario */
-    gdt_set(3, 0, 0xFFFFFFFF, 0xFA, 0xCF);
+    //gdt_set(3, 0, 0xFFFFFFFF, GDT_R3_CODE_XR, GDT_GRAN_DEFAULT);
     /* Segmento de datos de usuario */
-    gdt_set(4, 0, 0xFFFFFFFF, 0xF2, 0xCF);
+    //gdt_set(4, 0, 0xFFFFFFFF, GDT_R3_DATA_RW, GDT_GRAN_DEFAULT);
 
     /* Segmento de TSS */
     /* gdt_set(5, &tss_entry, &tss_entry + sizeof(tss_entry), 0x89, 0x0); */

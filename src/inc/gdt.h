@@ -7,8 +7,12 @@
 
 /* Importante: si se cambian estas macros se tienen que cambiar también en
  * el fichero boot.asm */
+#define GDT_NUM_DESC           1 + 2 /* NULL, Kernel */
 #define GDT_OFFSET_KERNEL_CODE 0x08 /* 8 : Primer descriptor  */
 #define GDT_OFFSET_KERNEL_DATA 0x10 /* 16: Segundo descriptor */
+#define GDT_OFFSET_USER_CODE   0x18 /* 24: Tercer descriptor  */
+#define GDT_OFFSET_USER_DATA   0x20 /* 32: Cuarto descriptor  */
+#define GDT_OFFSET_TSS         0x28 /* 40: Quinto descriptor  */
 
 typedef struct 
 {
@@ -25,6 +29,36 @@ typedef struct
     uint16_t limit;
     uint32_t base;
 } __attribute__((packed)) gdtr_t;
+
+
+
+/* Vol3: 3.4.5.1 */
+/* El campo gran de 8 bits tiene varios campos:
+ * G, DB, L, AVL y 4 bits de límite de segmento */
+/* G   = 1: El límite de segmento se interpreta en unidades de 4KB.
+ * DB  = 1: 1 en segmentos de código/datos en modo 32 bits (Vol3: 3.4.5)
+ * L   = 0: Es 0 si no estamos en modo IA-32e (Vol3: 3.4.5)
+ * AVL = 0: Bit de reserva o available, da igual su valor */
+#define GDT_GRAN_DEFAULT 0xCF
+
+/* El campo access de 8 bits tiene varios campos:
+ * P, 2 bits de DPL, S y 4 bits de tipo */
+/* P    = 1:  Segmento presente
+ * DPL  = 00: Anillo 0
+ * S    = 1:  Segmento de código/datos (no de sistema).
+ * Tipo = 1010: Segmento de código con permisos de ejecución/lectura */
+#define GDT_R0      0x90
+#define GDT_R3      0xF0
+#define GDT_CODE_XR 0x0A
+#define GDT_CODE_XO 0x08
+#define GDT_DATA_RW 0x02
+
+#define GDT_R0_CODE_XR (GDT_R0 | GDT_CODE_XR)
+#define GDT_R0_CODE_XO (GDT_R0 | GDT_CODE_XO)
+#define GDT_R0_DATA_RW (GDT_R0 | GDT_DATA_RW)
+#define GDT_R3_CODE_XR (GDT_R3 | GDT_CODE_XR)
+#define GDT_R3_CODE_XO (GDT_R3 | GDT_CODE_XO)
+#define GDT_R3_DATA_RW (GDT_R3 | GDT_DATA_RW)
 
 void gdt_init(void);
 void gdt_diag(void);
