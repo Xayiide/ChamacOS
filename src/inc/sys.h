@@ -22,11 +22,25 @@ typedef struct
     uint32_t eip, cs, eflags, old_esp, ss;
 } __attribute__((packed)) regs_t;
 
+typedef struct
+{
+    uint32_t kstack_start, kstack_end;
+    char     krn_start,    krn_end;
+    char     text_start,   text_end;
+    char     bss_start,    bss_end;
+} __attribute__((packed)) kmem_info_t;
+
+void         sys_fillinfo(void);
+void         sys_diag(void);
+kmem_info_t *sys_get_kmem_info(void);
+
 /* main.c (futuro mem) */
 void   *memcpy (void *dest, const void *src, size_t n);
 void   *memset (void *dest, uint8_t byte, size_t n);
 void   *memsetw(void *dest, uint16_t val, size_t n);
 size_t  strlen (const char *s);
+char   *strcpy(char *dest, const char *src);
+char   *strncpy(char *dest, const char *src, size_t n);
 
 /* estadísticas del sistema */
 void     sys_uptime_add_sec();
