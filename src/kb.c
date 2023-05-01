@@ -64,5 +64,9 @@ void kb_install_handler()
     irq_install_handler(1, kb_handler);
 
     kb_stat = inb(IO_KB_STA);
+#ifdef DEBUG_KB
     printk("El registro de estado del teclado: 0x%x\n", kb_stat);
+#else
+    kb_stat += kb_stat;
+#endif
 }
