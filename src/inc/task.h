@@ -6,6 +6,11 @@
 #define TASK_NAME_LEN  10
 #define TASK_MAX_TASKS 10
 
+#define TASK_PRIO_MAX 5
+#define TASK_PRIO_MIN 1
+
+#define TASK_ID_KTASK 0
+
 typedef enum
 {
     BLOCKED,
@@ -20,7 +25,7 @@ typedef struct
     uint8_t    prio;
     uint8_t    id;
     char       name[TASK_NAME_LEN + 1];
-} task_t;
+} __attribute__((packed)) task_t;
 
 void  task_init(void);
 void *task_get_tasks_array(void);
