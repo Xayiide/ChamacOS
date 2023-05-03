@@ -15,9 +15,10 @@ static void k_diag(void);
 
 void kmain(multiboot_info_t *mbd, uint32_t magic)
 {
+    sys_fillinfo();
+
     vga_init();
     printk("Bienvenido a ChamacOS!\n");
-    sys_diag();
 
     gdt_init();
     vga_puts("GDT inicializado\n");
@@ -41,8 +42,8 @@ void kmain(multiboot_info_t *mbd, uint32_t magic)
     kb_install_handler();
     printk("Teclado instalado\n");
 
+    k_diag();
     task_init();
-    task_diag();
 
 #ifdef DIAG
     vga_diag();
@@ -61,6 +62,6 @@ void kmain(multiboot_info_t *mbd, uint32_t magic)
 void k_diag(void)
 {
     sys_diag();
-    printk("\tkmain: [0x%x]\n", kmain);
+    printk("\tkmain:  [0x%x]\n", kmain);
     printk(" === === \n");
 }

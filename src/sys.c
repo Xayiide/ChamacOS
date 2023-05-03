@@ -15,14 +15,14 @@ static kmem_info_t kmem_info;
 
 void sys_fillinfo(void)
 {
-    kmem_info.krn_start    = _kernel_start;
-    kmem_info.krn_end      = _kernel_end;
-    kmem_info.text_start   = _text_start;
-    kmem_info.text_end     = _text_end;
-    kmem_info.bss_end      = _bss_end;
-    kmem_info.bss_start    = _bss_start;
-    kmem_info.kstack_start = kstack_start;
-    kmem_info.kstack_end   = kstack_end;
+    kmem_info.krn_start    = &_kernel_start;
+    kmem_info.krn_end      = &_kernel_end;
+    kmem_info.text_start   = &_text_start;
+    kmem_info.text_end     = &_text_end;
+    kmem_info.bss_end      = &_bss_end;
+    kmem_info.bss_start    = &_bss_start;
+    kmem_info.kstack_start = &kstack_start;
+    kmem_info.kstack_end   = &kstack_end;
 }
 
 void sys_diag(void)

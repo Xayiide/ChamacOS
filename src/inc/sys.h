@@ -8,6 +8,7 @@
     #define NULL ((void *) 0)
 #endif
 
+/* TODO: mover a math.h? */
 typedef enum
 {
     BASE_10 = 10,
@@ -24,10 +25,10 @@ typedef struct
 
 typedef struct
 {
-    uint32_t kstack_start, kstack_end;
-    char     krn_start,    krn_end;
-    char     text_start,   text_end;
-    char     bss_start,    bss_end;
+    uint32_t *kstack_start, *kstack_end;
+    char     *krn_start,    *krn_end;
+    char     *text_start,   *text_end;
+    char     *bss_start,    *bss_end;
 } __attribute__((packed)) kmem_info_t;
 
 void         sys_fillinfo(void);
@@ -50,7 +51,7 @@ uint32_t sys_uptime();
 void    sti(); /* activar    */
 void    cli(); /* desactivar */
 
-/* misceláneo */
+/* misceláneo -- FIXME: mover a math.h? */
 char *changebase(uint32_t num, base_t base);
 
 __attribute__((noreturn)) void panic(const char *str);

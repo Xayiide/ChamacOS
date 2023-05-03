@@ -9,27 +9,42 @@
 #define TASK_PRIO_MAX 5
 #define TASK_PRIO_MIN 1
 
-#define TASK_ID_KTASK 0
+#define TASK_ID_KTASK  0
+
+typedef struct
+{
+    uint32_t eax, ebx, ecx, edx;
+    uint32_t esi, edi, ebp, esp, eip;
+} __attribute__((packed)) proc_regs; /* FIXME: ¿Necesito el packed? */
 
 typedef enum
 {
+    UNUSED,
     BLOCKED,
     READY,
-    RUNNING
+    RUNNING,
+    DED
 } task_state;
 
 typedef struct
 {
-    uint32_t   stack_top;
-    task_state state;
-    uint8_t    prio;
-    uint8_t    id;
-    char       name[TASK_NAME_LEN + 1];
+    uint32_t   *stack_top;
+    task_state  state;
+    uint8_t     prio;
+    uint8_t     id;
+    char        name[TASK_NAME_LEN + 1];
 } __attribute__((packed)) task_t;
 
-void  task_init(void);
-void *task_get_tasks_array(void);
-void  task_diag(void);
+void    task_init(void);
+void   *task_get_tasks_array(void);
+task_t *task_get(uint8_t tid);
+void    task_diag(void);
+
+/*
+ * task_create()
+ * task_delete()
+ * init_sched() ?
+ */
 
 
 #endif
