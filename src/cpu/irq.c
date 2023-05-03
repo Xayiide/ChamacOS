@@ -1,11 +1,12 @@
-#include <stdint.h> /* uint_t */
+#include <stdint.h>  /* uint_t */
 
 #include "irq.h"
-#include "io.h"  /* inb outb  */
-#include "pic.h" /* pic_remap */
-#include "sys.h" /* regs_t    */
-#include "idt.h" /* idt_set   */
-#include "gdt.h" /* macros    */
+#include "io.h"      /* inb outb  */
+#include "pic.h"     /* pic_remap */
+#include "idt.h"     /* idt_set   */
+#include "gdt.h"     /* macros    */
+
+#include "lib/sys.h" /* regs_t    */
 
 extern void *irq_vector[];
 

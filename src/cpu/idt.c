@@ -1,8 +1,8 @@
-#include <stdint.h> /* uint_t */
+#include <stdint.h>      /* uint_t */
 
-#include "vga.h" /* printk */
 #include "idt.h"
-#include "sys.h" /* memset */
+#include "drivers/vga.h" /* printk */
+#include "lib/sys.h"     /* memset */
 
 static idt_entry_t idt[IDT_MAX_DESCRIPTORS];
 idtr_t             idtr;

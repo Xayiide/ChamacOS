@@ -1,10 +1,10 @@
-#include <stddef.h> /* size_t */
-#include <stdint.h> /* uint_t */
+#include <stddef.h>      /* size_t */
+#include <stdint.h>      /* uint_t */
 
 #include "sys.h"
-#include "vga.h" /* printk */
+#include "drivers/vga.h" /* printk */
 
-extern uint32_t kstack_start, kstack_end; /* "        */
+extern uint32_t kstack_start, kstack_end; /* boot.asm */
 
 extern char     _kernel_start, _kernel_end; /* linker.ld */
 extern char     _text_start,   _text_end;   /* "         */

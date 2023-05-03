@@ -1,7 +1,7 @@
 #ifndef _IRQ_H_
 #define _IRQ_H_
 
-#include "sys.h" /*regs_t */
+#include "lib/sys.h" /*regs_t */
 
 #define IRQ_NUM_INT 16
 

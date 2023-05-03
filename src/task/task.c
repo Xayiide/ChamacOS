@@ -1,8 +1,8 @@
-#include <stdint.h> /* uint_t */
+#include <stdint.h>      /* uint_t */
 
 #include "task.h"
-#include "sys.h"    /* memset */
-#include "vga.h"    /* printk */
+#include "lib/sys.h"     /* memset */
+#include "drivers/vga.h" /* printk */
 
 static task_t tasks[TASK_MAX_TASKS];
 static uint8_t active_tasks = 0;

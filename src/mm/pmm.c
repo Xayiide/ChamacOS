@@ -1,10 +1,10 @@
-#include <stdint.h>    /* uint_t      */
-#include <stddef.h>    /* size_t      */
-#include "pmm.h"
-#include "multiboot.h"
+#include <stdint.h>      /* uint_t      */
+#include <stddef.h>      /* size_t      */
 
-#include "vga.h"       /* printk      */
-#include "sys.h"       /* panic, NULL */
+#include "pmm.h"
+#include "kernel/multiboot.h"
+#include "drivers/vga.h" /* printk      */
+#include "lib/sys.h"     /* panic, NULL */
 
 static pmm_info_t meminfo =
 {

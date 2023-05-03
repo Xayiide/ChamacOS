@@ -1,9 +1,9 @@
-#include <stdint.h> /* uint_t   */
-#include <stdarg.h> /* va_arg   */
+#include <stdint.h>  /* uint_t   */
+#include <stdarg.h>  /* va_arg   */
 
 #include "vga.h"
-#include "io.h"     /* inb outb */
-#include "sys.h"    /* memset   */
+#include "cpu/io.h"  /* inb outb */
+#include "lib/sys.h" /* memset   */
 
 static uint16_t *vga_mem = 0;
 static uint16_t  vga_x   = 0;

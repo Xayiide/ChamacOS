@@ -2,7 +2,7 @@
 #define _PMM_H_
 
 #include <stdint.h>
-#include "multiboot.h"
+#include "kernel/multiboot.h"
 
 typedef struct
 {

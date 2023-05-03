@@ -1,10 +1,10 @@
-#include <stdint.h> /* uint_t              */
+#include <stdint.h>      /* uint_t              */
 
 #include "pit.h"
-#include "io.h"     /* inb outb */
-#include "sys.h"    /* cli, sti            */
-#include "vga.h"    /* printk              */
-#include "irq.h"    /* irq_install_handler */
+#include "io.h"          /* inb outb */
+#include "irq.h"         /* irq_install_handler */
+#include "lib/sys.h"     /* cli, sti            */
+#include "drivers/vga.h" /* printk              */
 
 static void pit_handler(regs_t *r);
 

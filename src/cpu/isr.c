@@ -1,8 +1,8 @@
 #include "isr.h"
-#include "idt.h"    /* idt_set    */
-#include "sys.h"    /* regs_t     */
-#include "vga.h"    /* vga_puts   */
-#include "gdt.h"    /* gdt macros */
+#include "idt.h"         /* idt_set    */
+#include "gdt.h"         /* gdt macros */
+#include "lib/sys.h"     /* regs_t     */
+#include "drivers/vga.h" /* vga_puts   */
 
 extern void *isr_vector[];
 

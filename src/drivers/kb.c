@@ -1,12 +1,11 @@
-#include <stdint.h> /* uint_t */
+#include <stdint.h>      /* uint_t */
 
 #include "kb.h"
-#include "sys.h" /* regs_t              */
-#include "io.h"  /* inb outb            */
-#include "vga.h" /* printk              */
-#include "irq.h" /* irq_install_handler */
-
-#include "pit.h" /* pit_get_ticks       */
+#include "drivers/vga.h" /* printk              */
+#include "lib/sys.h"     /* regs_t              */
+#include "cpu/io.h"      /* inb outb            */
+#include "cpu/irq.h"     /* irq_install_handler */
+#include "cpu/pit.h"     /* pit_get_ticks       */
 
 /* Esta función se está llamando dos veces cada vez que pulso una tecla (una
  * cuando pulso, otra cuando suelto). Para solucionarlo por ahora pongo un

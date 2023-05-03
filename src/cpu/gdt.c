@@ -1,6 +1,6 @@
 #include <stdint.h>
 
-#include "vga.h" /* printk */
+#include "drivers/vga.h" /* printk */
 #include "gdt.h"
 
 

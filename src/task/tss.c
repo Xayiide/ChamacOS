@@ -1,6 +1,6 @@
 #include <stdint.h>
 
-#include "vga.h" /* printk */
+#include "drivers/vga.h" /* printk */
 #include "tss.h"
 
 extern void tss_load(uint32_t num); /* boot.asm */
