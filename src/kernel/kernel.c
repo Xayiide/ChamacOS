@@ -8,7 +8,7 @@
 #include "drivers/kb.h"  /* kb_install_handler  */
 #include "lib/sys.h"     /* sti                 */
 #include "mm/pmm.h"      /* pmm_init            */
-#include "task/task.h"   /* task_init           */
+#include "task/sched.h"  /* sched_init          */
 #include "multiboot.h"
 
 static void k_diag(void);
@@ -43,7 +43,7 @@ void kmain(multiboot_info_t *mbd, uint32_t magic)
     printk("Teclado instalado\n");
 
     k_diag();
-    task_init();
+    sched_init();
 
 #ifdef DIAG
     vga_diag();
@@ -52,6 +52,7 @@ void kmain(multiboot_info_t *mbd, uint32_t magic)
     isr_diag();
     pmm_diag();
     pit_diag();
+    sched_diag();
 #endif
 
 

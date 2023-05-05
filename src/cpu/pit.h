@@ -8,6 +8,15 @@
  * valor 65536. Esto provoca una frecuencia de salida de 18.2065 Hz, es decir,
  * un IRQ cada 54.9254 ms. Esta es nuestra configuración por defecto. */
 
+/* Divisores útiles:
+ * · 205:   5820.4       Hz
+ * · 1192:  1000.99161   Hz
+ * · 1193:  1000.15255   Hz
+ * · 11831:  100.006     Hz
+ * · 11832:   99.99849   Hz
+ * · 62799:   19.0000159 Hz
+ */
+
 #define PIT_OSC_FQ   1193182 /* Frecuencia del osc. del PIT: 1.193182 MHz */
 
 /* Channel select     [BB______] */

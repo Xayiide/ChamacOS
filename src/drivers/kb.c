@@ -7,9 +7,8 @@
 #include "cpu/irq.h"     /* irq_install_handler */
 #include "cpu/pit.h"     /* pit_get_ticks       */
 
-/* Esta función se está llamando dos veces cada vez que pulso una tecla (una
- * cuando pulso, otra cuando suelto). Para solucionarlo por ahora pongo un
- * contador estático */
+/* Esta función se llama dos veces cada vez que pulso una tecla (una cuando
+ * pulso, otra cuando suelto) */
 void kb_handler(regs_t *r)
 {
     static uint16_t div   = 0;

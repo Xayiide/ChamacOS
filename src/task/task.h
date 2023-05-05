@@ -35,10 +35,8 @@ typedef struct
     char        name[TASK_NAME_LEN + 1];
 } __attribute__((packed)) task_t;
 
-void    task_init(void);
-void   *task_get_tasks_array(void);
-task_t *task_get(uint8_t tid);
-void    task_diag(void);
+char *task_state_str(task_state st);
+void  task_diag(task_t task);
 
 /*
  * task_create()
