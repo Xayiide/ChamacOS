@@ -67,11 +67,8 @@ flush2:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 global tss_load ; Usado en tss.c
 tss_load:
-    push ebp
-    mov ebp, esp
-    mov ax, [ebp + 8] ; Parametro "num"
+    mov ax, 0x18 ; Cuarto indice
     ltr ax
-    pop ebp
     ret
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

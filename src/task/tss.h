@@ -41,6 +41,7 @@ typedef struct
     uint16_t iomapbase;
 } __attribute__((packed)) tss_entry_t; /* Intel x86 SDM Vol 3 Fig 8-2 */
 
-void tss_init(uint32_t num);
+void tss_init(void);
+void tss_diag(void);
 
 #endif
