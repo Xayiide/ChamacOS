@@ -138,7 +138,7 @@ isr_no_err_stub 31   ; INTEL RESERVED DO NOT USE
 
 
 isr_common_stub:
-    pusha
+    pushad
     push ds ; Guarda registros de segmento
     push es
     push fs
@@ -160,7 +160,7 @@ isr_common_stub:
     pop gs
     pop es
     pop ds
-    popa
+    popad
 
     add esp, 8
     iret
@@ -221,8 +221,8 @@ irq_common_stub:
     
     mov eax, esp
     push eax
-    mov eax, irq_fault_handler
-    call eax
+    ;mov eax, irq_fault_handler
+    call irq_fault_handler
     pop eax
     
     pop gs
@@ -244,6 +244,7 @@ irq_vector:
 
 
 SECTION .bss
+ALIGN 16      ; Alineado a 16 bytes de acuerdo al ABI de System V
 kstack_end:
     resb 8192 ; Reserva 8192 bytes de memoria como stack para el kernel
 kstack_start:

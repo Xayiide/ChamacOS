@@ -7,10 +7,11 @@ SECTIONS
     _kernel_start = .;
     _text_start = .;
     .text phys : AT(phys) {
+        . = ALIGN(4096);
+        KEEP(*(.multiboot))
         code = .;
         *(.text)
         *(.rodata*)
-        . = ALIGN(4096);
     }
     _text_end = .;
     _data_start = .;

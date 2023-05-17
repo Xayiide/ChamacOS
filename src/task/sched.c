@@ -4,7 +4,7 @@
 #include "drivers/vga.h" /* printk */
 
 static task_t  *current_task;
-static task_t   tasks[TASK_MAX_TASKS];
+static task_t   tasks[4096];
 static uint8_t  active_tasks;
 
 static task_t   ready[TASK_MAX_TASKS];

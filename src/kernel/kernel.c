@@ -8,6 +8,7 @@
 #include "drivers/kb.h"  /* kb_install_handler  */
 #include "lib/sys.h"     /* sti                 */
 #include "mm/pmm.h"      /* pmm_init            */
+#include "task/tss.h"    /* tss_init            */
 #include "task/sched.h"  /* sched_init          */
 #include "multiboot.h"
 
@@ -34,6 +35,8 @@ void kmain(multiboot_info_t *mbd, uint32_t magic)
 
     pmm_init(mbd, magic);
 
+    //tss_init();
+
     sti();
 
     pit_install_handler();
@@ -44,6 +47,7 @@ void kmain(multiboot_info_t *mbd, uint32_t magic)
 
     k_diag();
     sched_init();
+    sched_diag();
 
 #ifdef DIAG
     vga_diag();

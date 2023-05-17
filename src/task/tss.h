@@ -39,9 +39,8 @@ typedef struct
     uint32_t ldtsel;
     uint16_t trap;
     uint16_t iomapbase;
-} __attribute__((packed)) tss_entry_t; /* Intel x86 SDM Vol 3 Fig 8-2 */
+} tss_entry_t; /* Intel x86 SDM Vol 3 Fig 8-2 */
 
 void tss_init(void);
-void tss_diag(void);
 
 #endif

@@ -10,9 +10,7 @@
 #define GDT_NUM_DESC           1 + 2 /* NULL, Kernel */
 #define GDT_OFFSET_KERNEL_CODE 0x08 /* 8 : Primer descriptor  */
 #define GDT_OFFSET_KERNEL_DATA 0x10 /* 16: Segundo descriptor */
-#define GDT_OFFSET_USER_CODE   0x18 /* 24: Tercer descriptor  */
-#define GDT_OFFSET_USER_DATA   0x20 /* 32: Cuarto descriptor  */
-#define GDT_OFFSET_TSS         0x28 /* 40: Quinto descriptor  */
+#define GDT_OFFSET_TSS         0x18 /* 24: Tercer descriptor  */
 
 typedef struct 
 {

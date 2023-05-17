@@ -33,7 +33,7 @@ QOPT = -gdb tcp::26000 -S
 # make fqemu UFLAG="-DDIAG" por ejemplo
 
 all: $(KERNEL_FULL)
-	$(CC) $(UFLAG) $(CFLAG) -T linker.ld kernelfull.o -o kernel.bin
+	$(CC) $(UFLAG) $(CFLAG) -T linker.ld kernelfull.o -o kernel.bin -lgcc
 #$(LD) -T linker.ld $(FILES) -o kernel.bin
 
 
