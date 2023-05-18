@@ -11,13 +11,10 @@ SECTIONS
         KEEP(*(.multiboot))
         code = .;
         *(.text)
+        *(.rodata)
     }
     _text_end = .;
     
-    .rodata BLOCK(4K) : ALIGN(4K)
-    {
-        *(.rodata)
-    }
 
     _data_start = .;
     .data BLOCK(4K) : ALIGN(4K) {
