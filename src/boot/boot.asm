@@ -9,6 +9,7 @@ start:
     mov esp, kstack_start ; Pon un stack
     jmp stublet
 
+SECTION .multiboot
 ALIGN 4
 mboot:
     ; Multiboot macros to make a few lines later more readable

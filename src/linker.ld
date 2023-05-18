@@ -11,18 +11,24 @@ SECTIONS
         KEEP(*(.multiboot))
         code = .;
         *(.text)
-        *(.rodata*)
     }
     _text_end = .;
+    
+    .rodata BLOCK(4K) : ALIGN(4K)
+    {
+        *(.rodata)
+    }
+
     _data_start = .;
-    .data : AT(phys + (data - code)) {
+    .data BLOCK(4K) : ALIGN(4K) {
         data = .;
         *(.data)
         . = ALIGN(4096);
     }
     _data_end = .;
+
     _bss_start = .;
-    .bss : AT(phys + (bss - code)) {
+    .bss BLOCK(4K) : ALIGN(4K) {
         bss = .;
         *(.bss)
         . = ALIGN(4096);
