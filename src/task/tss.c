@@ -12,7 +12,7 @@ void tss_init(void)
 {
     //ktss.cr3 = 0x00;
     //memset(&ktss, 0x00, sizeof(ktss));
-    //printk("size of entry: \n");
-    //printk("entry size: bytes\n");
+    printk("size of entry: \n");
+    printk("entry size: bytes\n");
     //tss_load();
 }

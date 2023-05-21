@@ -9,6 +9,7 @@ start:
     mov esp, kstack_start ; Pon un stack
     jmp stublet
 
+SECTION .multiboot
 ALIGN 4
 mboot:
     ; Multiboot macros to make a few lines later more readable
@@ -25,12 +26,13 @@ mboot:
     dd MULTIBOOT_HEADER_FLAGS
     dd MULTIBOOT_CHECKSUM
 
-    dd mboot
-    dd code
-    dd bss
-    dd end
-    dd start
+    ;dd mboot
+    ;dd code
+    ;dd bss
+    ;dd end
+    ;dd start
 
+SECTION .text
 stublet:
     extern kmain
     push eax        ; multiboot: magic

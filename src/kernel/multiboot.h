@@ -47,10 +47,10 @@
 #define MULTIBOOT_MEMORY_INFO                   0x00000002
 
 /* Must pass video information to OS. */
-#define MULTIBOOT_VIDEO_MODE                    0x00000004
+#define MULTIBOOT_VIDEO_MODE                    0x00000000
 
 /* This flag indicates the use of the address fields in the header. */
-#define MULTIBOOT_AOUT_KLUDGE                   0x00010000
+#define MULTIBOOT_AOUT_KLUDGE                   0x00000000
 
 /* Flags to be set in the ’flags’ member of the multiboot info structure. */
 
