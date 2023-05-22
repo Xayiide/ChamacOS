@@ -159,7 +159,7 @@ isr_common_stub:
     pop eax
 
     pop gs
-    pop gs
+    pop fs
     pop es
     pop ds
     popad
