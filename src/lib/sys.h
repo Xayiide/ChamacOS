@@ -15,10 +15,13 @@ typedef enum
     BASE_16 = 16
 } base_t;
 
+/* gs es lo último en ser apilado.
+ * Lo primero que apilamos nosotros es err_code e int_no.
+ * Antes de eso, la CPU apila primero ss, old_esp, eflags, cs y eip. */
 typedef struct
 {
     uint32_t gs, fs, es, ds;
-    uint32_t edi, esi, ebp, esp, ebx, edx, ecx, eax;
+    uint32_t edi, esi, ebp, esp, ebx, edx, ecx, eax; /* pushad */
     uint32_t int_no, err_code;
     uint32_t eip, cs, eflags, old_esp, ss;
 } __attribute__((packed)) regs_t;
