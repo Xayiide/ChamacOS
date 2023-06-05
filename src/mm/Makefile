@@ -6,25 +6,20 @@ BUILD_DIR = ../../build/mm
 
 CC = i686-elf-gcc
 
-CFLAG = -g -ffreestanding -falign-jumps -falign-functions -falign-labels      \
-		-falign-loops -fstrength-reduce -fomit-frame-pointer                  \
-		-finline-functions -Wno-unused-function -fno-builtin -Werror -Wno-cpp \
-		-Wno-unused-label -Wno-unused-parameter -nostdlib -nostartfiles -Wall \
-		-Wextra -nodefaultlibs -O0
-
+CFLAG = -std=gnu99 -ffreestanding -Wall -Wextra -Werror -g
 IFLAG = -I../
 
-MM_SRCS := $(wildcard *.c)
-MM_OBJS := $(patsubst %.c, $(BUILD_DIR)/%.o, $(MM_SRCS))
+MEM_SRCS := $(wildcard *.c)
+MEM_OBJS := $(patsubst %.c, $(BUILD_DIR)/%.o, $(MEM_SRCS))
 
 .PHONY: all clean re
 
-all: $(MM_OBJS)
+all: $(MEM_OBJS)
 
 $(BUILD_DIR)/%.o: %.c
 	$(CC) $(CFLAG) $(UFLAG) $(IFLAG) -c $< -o $@
 
 clean:
-	rm -f $(MM_OBJS)
+	rm -f $(MEM_OBJS)
 
 re: clean all

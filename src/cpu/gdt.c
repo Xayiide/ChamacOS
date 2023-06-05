@@ -42,14 +42,6 @@ void gdt_init(void)
     /* Segmento de datos de kernel. Igual pero tipo = datos */
     gdt_set(2, 0, 0xFFFFFFFF, GDT_R0_DATA_RW, GDT_GRAN_DEFAULT);
 
-    /* Segmento de código de usuario */
-    //gdt_set(3, 0, 0xFFFFFFFF, GDT_R3_CODE_XR, GDT_GRAN_DEFAULT);
-    /* Segmento de datos de usuario */
-    //gdt_set(4, 0, 0xFFFFFFFF, GDT_R3_DATA_RW, GDT_GRAN_DEFAULT);
-
-    /* Segmento de TSS */
-    /* gdt_set(5, &tss_entry, &tss_entry + sizeof(tss_entry), 0x89, 0x0); */
-
     gdt_load();
 }
 

@@ -4,25 +4,33 @@
 #include "sys.h"
 #include "drivers/vga.h" /* printk */
 
-extern uint32_t kstack_start, kstack_end; /* boot.asm */
 
-extern char     _kernel_start, _kernel_end; /* linker.ld */
-extern char     _text_start,   _text_end;   /* "         */
-extern char     _bss_start,    _bss_end;    /* "         */
+extern uint32_t _kstack_start, _kstack_end; /* boot.asm */
+
+extern char _kernel_start, _kernel_end; /* linker.ld */
+extern char _text_start,   _text_end;
+extern char _bss_start,    _bss_end;
+
 
 static uint32_t    uptime_seconds = 0;
 static kmem_info_t kmem_info;
 
+
 void sys_fillinfo(void)
 {
-    kmem_info.krn_start    = &_kernel_start;
-    kmem_info.krn_end      = &_kernel_end;
-    kmem_info.text_start   = &_text_start;
-    kmem_info.text_end     = &_text_end;
-    kmem_info.bss_end      = &_bss_end;
-    kmem_info.bss_start    = &_bss_start;
-    kmem_info.kstack_start = &kstack_start;
-    kmem_info.kstack_end   = &kstack_end;
+    static uint8_t done = 0;
+    if (done == 0)
+    {
+        done = 1;
+        kmem_info.krn_start    = &_kernel_start;
+        kmem_info.krn_end      = &_kernel_end;
+        kmem_info.text_start   = &_text_start;
+        kmem_info.text_end     = &_text_end;
+        kmem_info.bss_end      = &_bss_end;
+        kmem_info.bss_start    = &_bss_start;
+        kmem_info.kstack_start = &_kstack_start;
+        kmem_info.kstack_end   = &_kstack_end;
+    }
 }
 
 void sys_diag(void)
@@ -30,13 +38,14 @@ void sys_diag(void)
     printk("\tKernel: [0x%x -> 0x%x]\n", &_kernel_start, &_kernel_end);
     printk("\tText:   [0x%x -> 0x%x]\n", &_text_start,   &_text_end);
     printk("\tBSS:    [0x%x -> 0x%x]\n", &_bss_start,    &_bss_end);
-    printk("\tKstack: [0x%x <- 0x%x]\n", &kstack_end, &kstack_start);
+    printk("\tKstack: [0x%x <- 0x%x]\n", &_kstack_end,   &_kstack_start);
 }
 
 kmem_info_t *sys_get_kmem_info(void)
 {
     return &kmem_info;
 }
+
 
 /* TODO: mover a string.h */
 void *memcpy(void *dest, const void *src, size_t n)

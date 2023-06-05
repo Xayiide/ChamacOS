@@ -11,6 +11,7 @@
  * pulso, otra cuando suelto) */
 void kb_handler(regs_t *r)
 {
+    (void) r;
     static uint16_t div   = 0;
 
     uint32_t ticks;

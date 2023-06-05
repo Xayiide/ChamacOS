@@ -1,49 +1,54 @@
-[BITS 32]
+BITS 32
 
-; GRUB nos coloca ya en modo protegido (Vol3: 10.9.1)
+;                   MULTIBOOT
+MBALIGN  equ 1<<0
+MEMINFO  equ 1<<1
+MAGIC    equ 0x1BADB002
+FLAGS    equ MBALIGN | MEMINFO
+CHECKSUM equ -(MAGIC + FLAGS)
 
-global start        ; Necesario en linker.ld
-global kstack_end   ; Para kernel.c
-global kstack_start ; Para kernel.c
-start:
-    mov esp, kstack_start ; Pon un stack
-    jmp stublet
 
-SECTION .multiboot
-ALIGN 4
-mboot:
-    ; Multiboot macros to make a few lines later more readable
-    MULTIBOOT_PAGE_ALIGN	equ 1<<0
-    MULTIBOOT_MEMORY_INFO	equ 1<<1
-    MULTIBOOT_AOUT_KLUDGE	equ 1<<16
-    MULTIBOOT_HEADER_MAGIC	equ 0x1BADB002
-    MULTIBOOT_HEADER_FLAGS	equ MULTIBOOT_PAGE_ALIGN | MULTIBOOT_MEMORY_INFO | MULTIBOOT_AOUT_KLUDGE
-    MULTIBOOT_CHECKSUM	equ -(MULTIBOOT_HEADER_MAGIC + MULTIBOOT_HEADER_FLAGS)
-    EXTERN code, bss, end
+GLOBAL mbheader
+extern code         ; linker.ld
+extern bss          ;
+extern end          ;
 
-    ; This is the GRUB Multiboot header. A boot signature
-    dd MULTIBOOT_HEADER_MAGIC
-    dd MULTIBOOT_HEADER_FLAGS
-    dd MULTIBOOT_CHECKSUM
+section .multiboot
+align 4
+mbheader:           ; kernel.c
+    dd MAGIC
+    dd FLAGS
+    dd CHECKSUM
 
-    ;dd mboot
-    ;dd code
-    ;dd bss
-    ;dd end
-    ;dd start
+    dd mbheader
+    dd code
+    dd bss
+    dd end
+    dd _start
 
-SECTION .text
-stublet:
-    extern kmain
-    push eax        ; multiboot: magic
-    push ebx        ; multiboot: info structure
+global _kstack_end
+global _kstack_start
+section .bss
+align 16
+_kstack_end: ; stack bottom
+    resb 16384
+_kstack_start: ; stack top
+
+
+section .text
+extern kmain
+global _start
+_start:
+    mov esp, _kstack_start ; Hacemos un stack
+    push eax               ; multiboot magic
+    push ebx               ; multiboot info structure
     call kmain
 
     jmp $
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; GDT - Vol3: 3.4.5
+;                   GDT - Vol3: 3.4.5
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 global gdt_load
@@ -57,25 +62,14 @@ gdt_load:
     mov fs, ax
     mov gs, ax
     mov ss, ax
-    
-    jmp 0x08:flush2 ; 0x08 es el despl. del segmento de codigo - far jump
+
+    jmp 0x08:flush2 ; 0x08 es el despl. del segmento de código - far jump
 flush2:
-    ret             ; Retorna al codigo de C
+    ret             ; Retorna al código de C
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; TSS  Vol3: 8.2.1
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-global tss_load ; Usado en tss.c
-tss_load:
-    mov ax, 0x18 ; Cuarto indice
-    ltr ax
-    ret
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; ISRs
+;                   ISRs
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 global idt_load
@@ -84,22 +78,22 @@ global isr_vector
 extern idtr              ; idt.c
 extern isr_fault_handler ; isr.c
 
-idt_load: ; Vol3: 6.10
+idt_load:           ; Vol3: 6.10
     lidt[idtr]
     ret
 
 %macro isr_err_stub 1
 isr_stub_%+%1:
     cli
-    push byte %1  ; Apilo no. de interrupt. El no. de error ya lo apila la CPU
+    push byte %1    ; Apilo no. de interrupt. El no. de error ya lo apila la CPU
     jmp isr_common_stub
 %endmacro
 
 %macro isr_no_err_stub 1
 isr_stub_%+%1:
     cli
-    push byte 0  ; Apilo no. de error de mentira (Vol3: 6.12)
-    push byte %1 ; Apilo no. de interrupt.
+    push byte 0     ; Apilo no. de error de mentira (Vol3: 6.12)
+    push byte %1    ; Apilo no. de interrupción
     jmp isr_common_stub
 %endmacro
 
@@ -138,15 +132,14 @@ isr_err_stub    30   ; INTEL RESERVED DO NOT USE
 isr_no_err_stub 31   ; INTEL RESERVED DO NOT USE
                      ; 32-255 User defined
 
-
 isr_common_stub:
     pushad
-    push ds ; Guarda registros de segmento
+    push ds         ; Guarda registros de segmento
     push es
     push fs
     push gs
 
-    mov ax, 0x10 ; Segmento de datos del kernel
+    mov ax, 0x10    ; Segmento de datos del kernel
     mov ds, ax
     mov es, ax
     mov fs, ax
@@ -164,9 +157,6 @@ isr_common_stub:
     pop ds
     popad
 
-    add esp, 8
-    iret
-
 isr_vector:
 %assign i 0
 %rep 32
@@ -179,8 +169,8 @@ isr_vector:
 ; IRQs (PIC)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-extern irq_fault_handler
-global irq_vector
+extern irq_fault_handler ; irq.c
+global irq_vector        ; irq.c
 
 %macro irq_stub 1
 irq_stub_%+%1:
@@ -207,32 +197,31 @@ irq_stub 45
 irq_stub 46
 irq_stub 47
 
-
 irq_common_stub:
-    pusha
+    pushad
     push ds
     push es
     push fs
     push gs
-    
+
     mov ax, 0x10
     mov ds, ax
     mov es, ax
     mov fs, ax
     mov gs, ax
-    
+
     mov eax, esp
     push eax
-    ;mov eax, irq_fault_handler
-    call irq_fault_handler
+    mov eax, irq_fault_handler
+    call eax
     pop eax
-    
+
     pop gs
     pop fs
     pop es
     pop ds
-    popa
-    
+    popad
+
     add esp, 8
     iret
 
@@ -243,10 +232,47 @@ irq_vector:
 %assign i i+1
 %endrep
 
+section .text
+global switchTask
+switchTask:
+    ; 1: Guardar estado actual en last (EAX)
+    mov [eax],      edi
+    mov [eax + 4],  esi
+    mov [eax + 8],  ebp
+    mov [eax + 12], esp
+    mov [eax + 16], ebx
+    mov [eax + 20], edx
+    mov [eax + 24], ecx
+    mov [eax + 28], eax
+    pushfd              ; Para guardar EFLAGS
+    mov ebx, [esp]      ; No se puede hacer mov [eax + 32], [esp]
+    mov [eax + 32], ebx ;
+    popfd
+    ;mov [eax + 36], [saved eip] ; Guardar en eip el punto donde la tarea
+    ; anterior detuvo la ejecución. No es el valor actual de EIP, es el actual
+    ; valor de retorno de switchTask. Está arriba en el stack, sobre los
+    ; argumentos
+    mov ebx, [esp]       ; El valor de retorno está en donde apunta ESP.
+    mov [eax + 36], ebx  ; Lo guardamos en su lugar en el struct
 
+    ; 2: Cargar el estado de next (EDX)
+    ; Por ahora vamos a cargar el EIP, ESP.
+    mov [edx + 8], ebp  ; Guardar EBP (actualizar)
+    pushfd              ; Guardar EFLGAS (actualizar)
+    mov ebx, [esp]
+    mov [edx + 32], ebx
+    popfd
+    ; Sustituir el actual RET por el de la nueva tarea
+    pop ebx                 ; Quitar el RET actual
+    mov eax, [edx + 36]     ; Mover a EAX el EIP de la tarea a ejecutar
+    push eax                ; Ponerlo como RET
 
-SECTION .bss
-ALIGN 16      ; Alineado a 16 bytes de acuerdo al ABI de System V
-kstack_end:
-    resb 8192 ; Reserva 8192 bytes de memoria como stack para el kernel
-kstack_start:
+    ; La inst. ret hace pop eip y luego salta a eip. Si cambiamos ESP no podrá
+    ; hacer pop eip correctamente. Para evitarlo guardamos el valor en EAX,
+    ; cambiamos el ESP y saltamos a EAX
+    pop eax
+    mov esp, [edx + 12]
+    mov ebp, [edx + 8]
+
+    jmp eax
+    ;ret ; POP EIP ; jmp EIP

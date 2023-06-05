@@ -28,12 +28,6 @@ static void    pmm_set_frames(void *frame, size_t num, frame_status_t s);
 static void    pmm_map_entry_set(uint32_t index, frame_status_t s);
 static frame_status_t pmm_map_entry_get(uint32_t index);
 
-static void    pmm_test(void);
-static void    pmm_print_map(void);
-
-
-extern char _kernel_start, _kernel_end; /* linker.ld */
-
 
 void pmm_init(multiboot_info_t *mbd, uint32_t magic)
 {
@@ -42,10 +36,6 @@ void pmm_init(multiboot_info_t *mbd, uint32_t magic)
     pmm_map_init(mbd);
     pmm_printinfo();
     pmm_set_first();
-
-#ifdef DEBUG_PMM
-    pmm_test();
-#endif
 }
 
 void *pmm_alloc_frame(void)
@@ -53,8 +43,9 @@ void *pmm_alloc_frame(void)
     void *addr;
 
     /* No hay memoria libre */
-    if (meminfo.free_mem == 0 || meminfo.first_free == 0) {
-#ifdef DEBUG_PMM
+    if (meminfo.free_mem == 0 || meminfo.first_free == 0)
+    {
+#ifdef DEBUG_ALLOC
         printk("pmm: free_mem: %d || first_free = %d\n", meminfo.free_mem,
                 meminfo.first_free);
 #endif
@@ -63,16 +54,14 @@ void *pmm_alloc_frame(void)
 
     addr = PMM_INDX2ADDR(meminfo.first_free);
     pmm_set_frame(addr, FRAME_USED);
-
     pmm_set_first();
 
     return addr;
 }
 
-void pmm_free_frame(void *frame)
+void pmm_frame_free(void *frame)
 {
     pmm_set_frame(frame, FRAME_FREE);
-
     pmm_set_first();
 }
 
@@ -91,21 +80,21 @@ void pmm_diag(void)
     printk("  Dir. meminfo:     0x%x\n", &meminfo);
 }
 
-
-
+pmm_info_t *pmm_get_meminfo(void)
+{
+    return &meminfo;
+}
 
 
 static void pmm_check_magic(multiboot_info_t *mbd, uint32_t magic)
 {
     if (magic != MULTIBOOT_BOOTLOADER_MAGIC)
-    {
         panic("MULTIBOOT: Numero magico invalido");
-    }
 
     if (!(mbd->flags >> 6 & 0x01))
-    {
         panic("MULTIBOOT: Mapa de memoria invalido");
-    }
+
+    printk("MB Magic: 0x%x\n", magic);
 }
 
 static void pmm_fill_meminfo(multiboot_info_t *mbd)
@@ -129,7 +118,7 @@ static void pmm_fill_meminfo(multiboot_info_t *mbd)
         {
             vga_color(VGA_BACK_BLACK, VGA_FORE_CYAN);
             printk("Memoria usable: ");
-            printk(" [0x%x -> 0x%x] (%d) KBs\n", mmmt->addr_lo,
+            printk(" [0x%x -> 0x%x] (%d KBs)\n", mmmt->addr_lo,
                     (mmmt->addr_lo + mmmt->len_lo), mmmt->len_lo/1024);
         }
     }
@@ -157,11 +146,14 @@ static void pmm_map_init(multiboot_info_t *mbd)
 {
     uint32_t i;
     multiboot_memory_map_t *mmmt;
+    kmem_info_t *kmem;
 
     /* Ponemos a unos el mapa de memoria. Esto nos conviene para luego marcar
      * como disponibles sólo los rangos que nos interesan (y conocemos bien).
      * El resto mejor que queden como inusables, a riesgo de romper algo.  */
     memset(meminfo.pmm_map, 0xFF, meminfo.pmm_map_size);
+
+    kmem = sys_get_kmem_info();
 
     /* Iteramos sobre todas las secciones. Si están disponibles para su uso,
      * las marcamos como libres. El resto fueron marcadas como usadas. */
@@ -178,7 +170,7 @@ static void pmm_map_init(multiboot_info_t *mbd)
 
     /* Marcamos el primer MB de memoria como usado (boot, memoria VGA, el
      * mismo mapa de memoria (0x90000), etc. */
-    pmm_set_frames((void *) 0x0, (uint32_t) &_kernel_start / PMM_FRAME_SIZE,
+    pmm_set_frames((void *) 0x0, (uint32_t) kmem->krn_start / PMM_FRAME_SIZE,
                    FRAME_USED);
 
     /* Marcamos el frame correspondiente al mapa de memoria (0x90000) como
@@ -189,8 +181,8 @@ static void pmm_map_init(multiboot_info_t *mbd)
 
     /* Marcar como usadas los marcos correspondientes al código, stack y datos
      * del kernel. Esta información nos la da el linker script. */
-    pmm_set_frames((void *) &_kernel_start,
-                   (&_kernel_end - &_kernel_start) / PMM_FRAME_SIZE,
+    pmm_set_frames((void *) kmem->krn_start,
+                   (kmem->krn_end - kmem->krn_start) / PMM_FRAME_SIZE,
                    FRAME_USED);
 }
 
@@ -199,20 +191,21 @@ static void pmm_set_first(void)
     uint32_t i, found = 0;
     for (i = 0; i < meminfo.num_frames; i++)
     {
-        if (pmm_map_entry_get(i) == FRAME_FREE) {
+        if (pmm_map_entry_get(i) == FRAME_FREE)
+        {
             meminfo.first_free = i;
             found = 1;
             break;
         }
     }
+
     if (found == 0)
         meminfo.first_free = 0;
 }
 
 static void pmm_set_frame(void *frame, frame_status_t s)
 {
-    uint32_t addr;
-    uint32_t indx;
+    uint32_t addr, indx;
 
     addr = (uint32_t) frame;
 
@@ -221,6 +214,7 @@ static void pmm_set_frame(void *frame, frame_status_t s)
 
     indx = addr / PMM_FRAME_SIZE;
     pmm_map_entry_set(indx, s);
+
     if (s == FRAME_FREE)
         meminfo.free_mem += PMM_FRAME_SIZE;
     else if (s == FRAME_USED)
@@ -232,6 +226,15 @@ static void pmm_set_frame(void *frame, frame_status_t s)
 static void pmm_set_frames(void *frame, size_t num, frame_status_t s)
 {
     uint32_t i;
+
+#ifdef DEBUG_PMM
+    uint32_t end = (uint32_t) frame + ((num - 1) * PMM_FRAME_SIZE);
+    printk(" [%x [%d] => %x [%d]] %s\n", frame,
+                                         PMM_ADDR2INDX(frame),
+                                         end,
+                                         PMM_ADDR2INDX(end),
+                                         (s == FRAME_FREE ? "FREE" : "USED"));
+#endif
 
     for (i = 0; i < num; i++)
         pmm_set_frame(frame + (i * PMM_FRAME_SIZE), s);
@@ -279,26 +282,4 @@ static frame_status_t pmm_map_entry_get(uint32_t index)
         ret = FRAME_USED;
 
     return ret;
-}
-
-
-static void pmm_test(void)
-{
-    /* TODO */
-    return;
-}
-
-static void pmm_print_map(void)
-{
-    uint32_t i;
-    for (i = 0; i < meminfo.pmm_map_size; i++)
-    {
-        if (i % 32 == 0) {
-            printk("\n");
-            printk("[%d] ", i);
-        }
-        printk(" %x", meminfo.pmm_map[i]);
-        //printk(" "BYTE_TO_BIN_F, BYTE_TO_BIN(meminfo.pmm_map[i]));
-    }
-    printk("\n");
 }

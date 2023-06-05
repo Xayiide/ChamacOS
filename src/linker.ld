@@ -1,36 +1,48 @@
-OUTPUT_FORMAT("binary")
-ENTRY(start)
-phys = 0x00100000; /* 1M */
+ENTRY(_start)
+
 SECTIONS
 {
-    . = phys;
+    . = 1M;
+
     _kernel_start = .;
-    _text_start = .;
-    .text phys : AT(phys) {
-        . = ALIGN(4096);
-        KEEP(*(.multiboot))
-        code = .;
+    .text BLOCK(4K) : ALIGN(4K)
+    {
+        _text_start = .;
+
+        code = .; /* multiboot_header */
+        
+        _mb_start = .;
+        *(.multiboot)
+        _mb_end   = .;
         *(.text)
+        _text_end   = .;
+    }
+
+    .rodata BLOCK(4K) : ALIGN(4K)
+    {
+        _rodata_start = .;
         *(.rodata)
+        _rodata_end   = .;
     }
-    _text_end = .;
-    
 
-    _data_start = .;
-    .data BLOCK(4K) : ALIGN(4K) {
-        data = .;
+    .data BLOCK(4K) : ALIGN(4K)
+    {
+        _data_start = .;
         *(.data)
-        . = ALIGN(4096);
+        _data_end   = .;
     }
-    _data_end = .;
 
-    _bss_start = .;
-    .bss BLOCK(4K) : ALIGN(4K) {
-        bss = .;
+    .bss BLOCK(4K) : ALIGN(4K)
+    {
+        _bss_start = .;
+        bss = .; /* multiboot_header */
+        *(COMMON)
         *(.bss)
-        . = ALIGN(4096);
+        _bss_end   = .;
     }
-    _bss_end = .;
-    _kernel_end = .;
-    end = .;
+    end = .; /* multiboot_header */
+    _kernel_end   = .;
+
+    /* Otras secciones producidas por el compilador */
 }
+

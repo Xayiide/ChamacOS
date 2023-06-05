@@ -15,6 +15,7 @@ static pit_info_t pit_info = {
 
 static void pit_handler(regs_t *r)
 {
+    (void) r;
     pit_info.num_ints++; /* FIXME: cuando se desborda, el mód es incorrecto */
 
     /* TODO: para mayor exactitud, cuando se cambia ints_sec (pit_set_phase)

@@ -6,12 +6,7 @@ BUILD_DIR = ../../build/task
 
 CC = i686-elf-gcc
 
-CFLAG = -g -ffreestanding -falign-jumps -falign-functions -falign-labels      \
-		-falign-loops -fstrength-reduce -fomit-frame-pointer                  \
-		-finline-functions -Wno-unused-function -fno-builtin -Werror -Wno-cpp \
-		-Wno-unused-label -Wno-unused-parameter -nostdlib -nostartfiles -Wall \
-		-Wextra -nodefaultlibs -O0
-
+CFLAG = -std=gnu99 -ffreestanding -Wall -Wextra -Werror -g
 IFLAG = -I../
 
 TASK_SRCS := $(wildcard *.c)

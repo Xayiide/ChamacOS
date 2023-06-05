@@ -37,6 +37,7 @@ void idt_diag(void)
     vga_color(VGA_BACK_BLACK, VGA_FORE_RED);
     printk(" === IDT DIAGNOSIS ===\n");
     vga_color(VGA_BACK_BLACK, VGA_FORE_WHITE);
-    printk("  idt:  0x%x\n", &idt);
-    printk("  idtr: 0x%x\n", &idtr);
+    printk("  idt:      0x%x\n", &idt);
+    printk("  idtr:     0x%x\n", &idtr);
+    printk("  idt_load: 0x%x\n", &idt_load);
 }
