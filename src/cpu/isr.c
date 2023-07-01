@@ -57,7 +57,7 @@ void isr_fault_handler(regs_t *r)
     if (r->int_no < IDT_NUM_EXC)
     {
         vga_color(VGA_BACK_BLACK, VGA_FORE_RED);
-        vga_puts(isr_exception_name[r->int_no]); /* TODO: printk */
+        printk(isr_exception_name[r->int_no]);
         vga_puts("\nParando el sistema!\n");
         vga_color(VGA_BACK_BLACK, VGA_FORE_WHITE);
         while (1);
