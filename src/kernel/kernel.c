@@ -15,13 +15,6 @@ extern struct multiboot_header mbheader __attribute__((section(".multiboot")));
 
 static void k_diag(void);
 
-void doIt(void)
-{
-    printk("Switching to otherTask...\n");
-    yield();
-    printk("Returned to mainTask\n");
-}
-
 void kmain(multiboot_info_t *mbd, uint32_t magic)
 {
     /* Initialize terminal interface */
