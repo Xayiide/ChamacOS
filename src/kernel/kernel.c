@@ -36,8 +36,8 @@ void kmain(multiboot_info_t *mbd, uint32_t magic)
 
     k_diag();
 
-    initTasking();
-    startChamacOS();
+    task_init();
+    task_start_ChamacOS();
 
 #ifdef DIAG
     //vga_diag();

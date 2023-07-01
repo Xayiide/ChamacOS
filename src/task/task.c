@@ -21,7 +21,7 @@ static void task1(void)
         printk("[TASK 1] Switching to task 2...\n");
         runningTask = (Task *) runningTask->next;
         vga_color(VGA_BACK_BLACK, VGA_FORE_WHITE);
-        switchTask(&last->regs, &runningTask->regs);
+        task_switch(&last->regs, &runningTask->regs);
         vga_color(VGA_BACK_BLACK, VGA_FORE_CYAN);
         printk("[TASK 1] Returned to task 1\n");
         vga_color(VGA_BACK_BLACK, VGA_FORE_WHITE);
@@ -38,31 +38,31 @@ static void task2(void)
         last = runningTask;
         printk("[TASK 2] Multitasking world!\n");
         runningTask = (Task *) runningTask->next;
-        switchTask(&last->regs, &runningTask->regs);
+        task_switch(&last->regs, &runningTask->regs);
         printk("[TASK 2] Returned to task 2...\n");
 
         vga_color(VGA_BACK_BLACK, VGA_FORE_WHITE);
     }
 }
 
-void initTasking()
+void task_init()
 {
     asm volatile("pushfl; movl (%%esp), %%eax; movl %%eax, %0; popfl;":"=m"(task1_TCB.regs.eflags)::"%eax");
 
-    createTask(&task1_TCB, task1, task1_TCB.regs.eflags);
-    createTask(&task2_TCB, task2, task1_TCB.regs.eflags);
+    task_create(&task1_TCB, task1, task1_TCB.regs.eflags);
+    task_create(&task2_TCB, task2, task1_TCB.regs.eflags);
     task1_TCB.next = (struct Task *) &task2_TCB;
     task2_TCB.next = (struct Task *) &task1_TCB;
 
     runningTask = &task1_TCB;
 }
 
-void startChamacOS()
+void task_start_ChamacOS()
 {
     task1();
 }
 
-void createTask(Task *task, void (*main)(), uint32_t flags)
+void task_create(Task *task, void (*main)(), uint32_t flags)
 {
     static uint8_t num = 0;
 
@@ -96,12 +96,12 @@ void createTask(Task *task, void (*main)(), uint32_t flags)
     }
 }
 
-void yield()
+void task_yield()
 {
     Task *last = runningTask;
     runningTask = (Task *) runningTask->next;
     task_diag(last);
-    switchTask(&last->regs, &runningTask->regs);
+    task_switch(&last->regs, &runningTask->regs);
     task_diag(last);
 }
 

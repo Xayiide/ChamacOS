@@ -16,11 +16,11 @@ typedef struct
     struct Task *next;
 } Task;
 
-void initTasking(void);
-void createTask(Task *, void(*)(), uint32_t);
-void yield(void);
-void startChamacOS(void);
+void task_init(void);
+void task_create(Task *, void(*)(), uint32_t);
+void task_yield(void);
+void task_start_ChamacOS(void);
 
-extern void switchTask(Registers *old, Registers *new); /* boot.asm */
+extern void task_switch(Registers *old, Registers *new); /* boot.asm */
 
 #endif

@@ -233,8 +233,8 @@ irq_vector:
 %endrep
 
 section .text
-global switchTask
-switchTask:
+global task_switch
+task_switch:
     ; 1: Guardar estado actual en last (EAX)
     mov [eax],      edi
     mov [eax + 4],  esi
