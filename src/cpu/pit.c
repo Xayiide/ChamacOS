@@ -25,6 +25,7 @@ static void pit_handler(regs_t *r)
      * ser 34 para no perder proporcionalidad */
     if (pit_info.num_ints % pit_info.ints_sec == 0)
     {
+        /* pit_info.num_ints = 0 ? */
         sys_uptime_add_sec();
     }
 }

@@ -38,6 +38,7 @@
 //#define VGA_IO_DATA 0x3D5
 
 /* TODO: Hacer estático todas las funciones que no sean:
+ *  · vga_init
  *  · printk
  *  · vga_color
  */
