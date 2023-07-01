@@ -37,6 +37,11 @@
 //#define VGA_IO_CTRL 0x3D4
 //#define VGA_IO_DATA 0x3D5
 
+/* TODO: Hacer estático todas las funciones que no sean:
+ *  · printk
+ *  · vga_color
+ */
+
 void vga_init(void);
 void vga_putchar(uint8_t c); /* static? */
 void vga_clear(void);
