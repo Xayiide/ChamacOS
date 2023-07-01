@@ -59,7 +59,7 @@ void *pmm_alloc_frame(void)
     return addr;
 }
 
-void pmm_frame_free(void *frame)
+void pmm_free_frame(void *frame)
 {
     pmm_set_frame(frame, FRAME_FREE);
     pmm_set_first();
