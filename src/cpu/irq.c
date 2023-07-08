@@ -8,6 +8,8 @@
 
 #include "lib/sys.h" /* regs_t    */
 
+#include "drivers/vga.h" /* printk */
+
 extern void *irq_vector[];
 
 void *irq_routines[16] = {0, 0, 0, 0, 0, 0, 0, 0,
@@ -52,4 +54,16 @@ void irq_fault_handler(regs_t *r)
         outb(IO_PIC2_CMD, PIC_EOI);
     }
     outb(IO_PIC1_CMD, PIC_EOI); /* Y siempre se lo tenemos que enviar al master */
+}
+
+
+void irq_diag(void)
+{
+    vga_color(VGA_BACK_BLACK, VGA_FORE_RED);
+    printk(" === IRQ DIAGNOSIS ===\n");
+    vga_color(VGA_BACK_BLACK, VGA_FORE_WHITE);
+    printk("  irq_routines:   0x%x\n", &irq_routines);
+    printk("  irq_vector:     0x%x\n", &irq_vector);
+    printk("  irq_vector[0]:  0x%x\n", &irq_vector[0]);
+    printk("  irq_vector[31]: 0x%x\n", &irq_vector[16]);
 }

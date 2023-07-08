@@ -249,14 +249,13 @@ task_switch:
     mov [eax + 32], ebx ;
     popfd
     ;mov [eax + 36], [saved eip] ; Guardar en eip el punto donde la tarea
-    ; anterior detuvo la ejecución. No es el valor actual de EIP, es el actual
-    ; valor de retorno de switchTask. Está arriba en el stack, sobre los
-    ; argumentos
+    ; anterior detuvo la ejecución. No es el valor actual de EIP, es el
+    ; actual valor de retorno de switchTask. Está arriba en el stack,
+    ; sobre los argumentos
     mov ebx, [esp]       ; El valor de retorno está en donde apunta ESP.
     mov [eax + 36], ebx  ; Lo guardamos en su lugar en el struct
 
     ; 2: Cargar el estado de next (EDX)
-    ; Por ahora vamos a cargar el EIP, ESP.
     mov [edx + 8], ebp  ; Guardar EBP (actualizar)
     pushfd              ; Guardar EFLGAS (actualizar)
     mov ebx, [esp]
@@ -267,9 +266,9 @@ task_switch:
     mov eax, [edx + 36]     ; Mover a EAX el EIP de la tarea a ejecutar
     push eax                ; Ponerlo como RET
 
-    ; La inst. ret hace pop eip y luego salta a eip. Si cambiamos ESP no podrá
-    ; hacer pop eip correctamente. Para evitarlo guardamos el valor en EAX,
-    ; cambiamos el ESP y saltamos a EAX
+    ; La inst. ret hace pop eip y luego salta a eip. Si cambiamos ESP
+    ; no podrá hacer pop eip correctamente. Para evitarlo guardamos
+    ; el valor en EAX, cambiamos el ESP y saltamos a EAX
     pop eax
     mov esp, [edx + 12]
     mov ebp, [edx + 8]

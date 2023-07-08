@@ -22,9 +22,14 @@ void kmain(multiboot_info_t *mbd, uint32_t magic)
     vga_init();
     printk("Bienvenido a ChamacOS!\n");
 
+    k_diag();
     gdt_init();
+
     idt_init();
+
     isr_init();
+
+
     irq_init();
 
     pmm_init(mbd, magic);
@@ -33,8 +38,6 @@ void kmain(multiboot_info_t *mbd, uint32_t magic)
 
     pit_install_handler();
     kb_install_handler();
-
-    k_diag();
 
     task_init();
     task_start_ChamacOS();

@@ -16,7 +16,7 @@ static pit_info_t pit_info = {
 static void pit_handler(regs_t *r)
 {
     (void) r;
-    pit_info.num_ints++; /* FIXME: cuando se desborda, el mód es incorrecto */
+    pit_info.num_ints++; /* FIXME: si se desborda. el mód es incorrecto */
 
     /* TODO: para mayor exactitud, cuando se cambia ints_sec (pit_set_phase)
      * también habría que cambiar num_ints en proporción. Por ejemplo si
@@ -25,7 +25,7 @@ static void pit_handler(regs_t *r)
      * ser 34 para no perder proporcionalidad */
     if (pit_info.num_ints % pit_info.ints_sec == 0)
     {
-        /* pit_info.num_ints = 0 ? */
+        /* pit_info.num_ints = 0 ? Para que no desborde */
         sys_uptime_add_sec();
     }
 }

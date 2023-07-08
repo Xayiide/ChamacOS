@@ -17,9 +17,7 @@ void kb_handler(regs_t *r)
     uint32_t ticks;
     uint32_t uptime;
     uint8_t  scancode;
-
     uint16_t count;
-
 
     scancode = inb(IO_KB_DAT);
 
@@ -52,8 +50,6 @@ void kb_handler(regs_t *r)
             printk("[PIT Counter: %d/%d\n", count, PIT_OSC_FQ / pit_get_freq());
         }
     }
-
-
 }
 
 void kb_install_handler()

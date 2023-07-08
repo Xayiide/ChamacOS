@@ -69,6 +69,8 @@ void isr_diag(void)
     vga_color(VGA_BACK_BLACK, VGA_FORE_RED);
     printk(" === ISR DIAGNOSIS ===\n");
     vga_color(VGA_BACK_BLACK, VGA_FORE_WHITE);
-    printk("  isr_vector:    0x%x\n", &isr_vector);
-    printk("  isr_exc_names: 0x%x\n", &isr_exception_name);
+    printk("  isr_exc_names:  0x%x\n", &isr_exception_name);
+    printk("  isr_vector:     0x%x\n", &isr_vector);
+    printk("  isr_vector[0]:  0x%x\n", &isr_vector[0]);
+    printk("  isr_vector[31]: 0x%x\n", &isr_vector[31]);
 }

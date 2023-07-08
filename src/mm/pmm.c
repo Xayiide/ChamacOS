@@ -54,7 +54,7 @@ void *pmm_alloc_frame(void)
 
     addr = PMM_INDX2ADDR(meminfo.first_free);
     pmm_set_frame(addr, FRAME_USED);
-    pmm_set_first();
+    //pmm_set_first();
 
     return addr;
 }
@@ -94,7 +94,7 @@ static void pmm_check_magic(multiboot_info_t *mbd, uint32_t magic)
     if (!(mbd->flags >> 6 & 0x01))
         panic("MULTIBOOT: Mapa de memoria invalido");
 
-    printk("MB Magic: 0x%x\n", magic);
+    printk("MB Magic (EAX): 0x%x\n", magic);
 }
 
 static void pmm_fill_meminfo(multiboot_info_t *mbd)
@@ -117,9 +117,19 @@ static void pmm_fill_meminfo(multiboot_info_t *mbd)
         if (mmmt->type == MULTIBOOT_MEMORY_AVAILABLE)
         {
             vga_color(VGA_BACK_BLACK, VGA_FORE_CYAN);
-            printk("Memoria usable: ");
+            printk("Memoria usable:    ");
             printk(" [0x%x -> 0x%x] (%d KBs)\n", mmmt->addr_lo,
-                    (mmmt->addr_lo + mmmt->len_lo), mmmt->len_lo/1024);
+                    (mmmt->addr_lo + mmmt->len_lo - 1), mmmt->len_lo/1024);
+            vga_color(VGA_BACK_BLACK, VGA_FORE_WHITE);
+        }
+        else
+        {
+            vga_color(VGA_BACK_BLACK, VGA_FORE_MAGEN);
+            printk("Memoria no usable: ");
+            printk(" [0x%x -> 0x%x] (%d KBs)\n", mmmt->addr_lo,
+                    (mmmt->addr_lo + mmmt->len_lo - 1), mmmt->len_lo/1024);
+            vga_color(VGA_BACK_BLACK, VGA_FORE_WHITE);
+
         }
     }
 
@@ -182,7 +192,7 @@ static void pmm_map_init(multiboot_info_t *mbd)
     /* Marcar como usadas los marcos correspondientes al código, stack y datos
      * del kernel. Esta información nos la da el linker script. */
     pmm_set_frames((void *) kmem->krn_start,
-                   (kmem->krn_end - kmem->krn_start) / PMM_FRAME_SIZE,
+                   (kmem->krn_end - kmem->krn_start) / PMM_FRAME_SIZE + 1,
                    FRAME_USED);
 }
 
@@ -212,7 +222,7 @@ static void pmm_set_frame(void *frame, frame_status_t s)
     if (addr > meminfo.installed_mem)
         panic("pmm_set_frame: frame out of bounds");
 
-    indx = addr / PMM_FRAME_SIZE;
+    indx = addr / PMM_FRAME_SIZE; /* PMM_ADDR2INDX(addr) ? */
     pmm_map_entry_set(indx, s);
 
     if (s == FRAME_FREE)

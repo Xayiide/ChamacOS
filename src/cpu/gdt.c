@@ -31,7 +31,7 @@ static void gdt_set(uint32_t num, uint32_t base, uint32_t limit,
 void gdt_init(void)
 {
     gdtr.limit = (sizeof(gdt_entry_t) * 3) - 1;
-    gdtr.base = (uint32_t) gdt;
+    gdtr.base  = (uint32_t) gdt;
 
     /* Descriptor nulo */
     gdt_set(0, 0, 0, 0, 0);
@@ -53,4 +53,6 @@ void gdt_diag(void)
     printk("  gdt:      0x%x\n", &gdt);
     printk("  gdtr:     0x%x\n", &gdtr);
     printk("  gdt_load: 0x%x\n", gdt_load);
+    printk("  gdt_init: 0x%x\n", gdt_init);
+    printk("  gdt_set:  0x%x\n", gdt_set);
 }
