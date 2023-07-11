@@ -18,12 +18,12 @@ static void task1(void)
     while (1) {
         vga_color(VGA_BACK_BLACK, VGA_FORE_CYAN);
         last = runningTask;
-        printk("[TASK 1] Switching to task 2...\n");
+        printk("[TASK 1] Cambiando a la tarea 2...\n");
         runningTask = (Task *) runningTask->next;
         vga_color(VGA_BACK_BLACK, VGA_FORE_WHITE);
         task_switch(&last->regs, &runningTask->regs);
         vga_color(VGA_BACK_BLACK, VGA_FORE_CYAN);
-        printk("[TASK 1] Returned to task 1\n");
+        printk("[TASK 1] De vuelta en la tarea 1\n");
         vga_color(VGA_BACK_BLACK, VGA_FORE_WHITE);
     }
 }
@@ -36,10 +36,10 @@ static void task2(void)
         vga_color(VGA_BACK_BLACK, VGA_FORE_WHITE);
 
         last = runningTask;
-        printk("[TASK 2] Multitasking world!\n");
+        printk("[TASK 2] Cambiando a la tarea 1...\n");
         runningTask = (Task *) runningTask->next;
         task_switch(&last->regs, &runningTask->regs);
-        printk("[TASK 2] Returned to task 2...\n");
+        printk("[TASK 2] De vuelta en la tarea 2\n");
 
         vga_color(VGA_BACK_BLACK, VGA_FORE_WHITE);
     }

@@ -36,6 +36,7 @@ void kmain(multiboot_info_t *mbd, uint32_t magic)
 
     sti();
 
+
     pit_install_handler();
     kb_install_handler();
 
